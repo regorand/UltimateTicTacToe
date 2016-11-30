@@ -60,10 +60,10 @@ public class Game {
         final FieldState activePlayer = turnCounter % 2 == 0 ? FieldState.PLAYER_X : FieldState.PLAYER_O;
         field[outerFieldId].doMove(innerFieldId, activePlayer);
         //TODO once drawables are in place FieldState doesnt need a String anymore
-        view.setText(activePlayer.toString());
+        //view.setText(activePlayer.toString());
         if(activePlayer == FieldState.PLAYER_X){
             //TODO create drawable for X and O and then set them
-            //view.setBackgroundResource(R.drawable.tic_tac_toe_x);
+            view.setBackgroundResource(R.drawable.tic_tac_toe_x);
         } else {
             view.setBackgroundResource(R.drawable.tic_tac_toe_o);
         }
