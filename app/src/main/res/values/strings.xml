@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">UltimateTicTacToe</string>
+    <string name="field_1">0</string>
+    <string name="field_2">1</string>
+    <string name="field_3">2</string>
+    <string name="field_4">3</string>
+    <string name="field_5">4</string>
+    <string name="field_6">5</string>
+    <string name="field_7">6</string>
+    <string name="field_8">7</string>
+    <string name="field_9">8</string>
+
+</resources>
