@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="black">#000000</color>
+    <!-- Alphachannel 66 for 40% and 3A for 22% opacity -->
+    <color name="field_disabled">#11000000</color>
+    <color name="field_enabled">#8050f442</color>
+    <color name="field_white">#FFFFFF</color>
 </resources>

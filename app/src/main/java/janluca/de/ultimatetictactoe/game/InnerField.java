@@ -28,9 +28,38 @@ public class InnerField {
     }
 
     private void checkGameOver(){
+        //checks vertical winning
+        for(int i = 0; i < 3; i++){
+            if(field[i] == field[i+3] && field[i] == field[i+6] && field[i] != FieldState.EMPTY){
+                setWinner(field[i]);
+                return;
+            }
+        }
 
-        //TODO winner logic here
-        //write winner in this.winner
+        //checks horizontal winning
+        for(int i = 0; i <= 6; i+=3){
+            if(field[i] == field[i+1] && field[i] == field[i+2] && field[i] != FieldState.EMPTY){
+                setWinner(field[i]);
+                return;
+            }
+        }
+
+        //diagonal winning check top-left to bottom-right
+        if(field[0] == field[4] && field[4] == field[8] && field[4] != FieldState.EMPTY){
+            setWinner(field[4]);
+            return;
+        }
+
+        //diagonal winning check top-right to bottom-Left
+        if(field[2] == field[4] && field[4] == field[6] && field[4] != FieldState.EMPTY){
+            setWinner(field[4]);
+        }
+    }
+
+    private void setWinner(FieldState winner){
+        this.winner = winner;
+        hasWinner = true;
+        System.out.println("field won for " + winner.toString());
     }
 
     public boolean hasWinner(){

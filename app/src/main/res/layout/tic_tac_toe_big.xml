@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <janluca.de.ultimatetictactoe.TicTacToeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/field_white">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -15,6 +16,22 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:tag="@string/field_1"
+            android:id="@+id/outerFieldZero">
+
+            <include layout="@layout/tic_tac_toe_small" />
+
+        </FrameLayout>
+
+        <View
+            android:layout_width="4dp"
+            android:layout_height="match_parent"
+            android:background="#000000"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:tag="@string/field_2"
             android:id="@+id/outerFieldOne">
 
             <include layout="@layout/tic_tac_toe_small" />
@@ -30,22 +47,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:tag="@string/field_2">
-
-            <include layout="@layout/tic_tac_toe_small" />
-
-        </FrameLayout>
-
-        <View
-            android:layout_width="4dp"
-            android:layout_height="match_parent"
-            android:background="#000000"/>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:tag="@string/field_3">
+            android:tag="@string/field_3"
+            android:id="@+id/outerFieldTwo">
 
             <include layout="@layout/tic_tac_toe_small" />
 
@@ -68,7 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:tag="@string/field_4">
+            android:tag="@string/field_4"
+            android:id="@+id/outerFieldThree">
 
             <include layout="@layout/tic_tac_toe_small" />
 
@@ -83,7 +87,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:tag="@string/field_5">
+            android:tag="@string/field_5"
+            android:id="@+id/outerFieldFour">
 
             <include layout="@layout/tic_tac_toe_small" />
 
@@ -98,7 +103,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:tag="@string/field_6">
+            android:tag="@string/field_6"
+            android:id="@+id/outerFieldFive">
 
             <include layout="@layout/tic_tac_toe_small" />
 
@@ -122,7 +128,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:tag="@string/field_7">
+            android:tag="@string/field_7"
+            android:id="@+id/outerFieldSix">
 
             <include layout="@layout/tic_tac_toe_small" />
 
@@ -137,7 +144,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:tag="@string/field_8">
+            android:tag="@string/field_8"
+            android:id="@+id/outerFieldSeven">
 
             <include layout="@layout/tic_tac_toe_small" />
 
@@ -152,7 +160,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:tag="@string/field_9">
+            android:tag="@string/field_9"
+            android:id="@+id/outerFieldEight">
 
             <include layout="@layout/tic_tac_toe_small" />
 
