@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import java.lang.reflect.Field;
 
@@ -26,7 +27,7 @@ public class Game {
 
     private boolean gameOver;
 
-    MainActivity activity;
+    private MainActivity activity;
 
     private int turnCounter;
 
@@ -36,6 +37,8 @@ public class Game {
         this.activity = activity;
 
         saveOuterFieldViews();
+        updateStatusField();
+        clearField();
 
         field = new InnerField[9];
         for (int i = 0; i < field.length; i++) {
@@ -46,6 +49,14 @@ public class Game {
         gameOver = false;
         activeOuterField = -1;
         turnCounter = 0;
+    }
+
+    private void clearField(){
+        for (View outerFieldView : outerFieldViews) {
+            for(int i = 0; i < 9; i++){
+                outerFieldView.findViewWithTag(String.valueOf(i)).setBackground(null);
+            }
+        }
     }
 
     private void changeEnabledFieldsVisualisation(){
@@ -70,30 +81,37 @@ public class Game {
         }
     }
 
+    private void updateStatusField(){
+        TextView statusView = (TextView) activity.findViewById(R.id.statusText);
+        if(gameOver){
+            statusView.setText(winner.toString() + " won the game!");
+        } else {
+            statusView.setText("It's " + getActivePlayer().toString() + "'s turn");
+        }
+    }
+
     public boolean handleClickOnView(Button view){
         //felt dirty wrting this - sorry
         int outerTag = Integer.valueOf((String) ((FrameLayout) view.getParent().getParent().getParent()).getTag()),
             innerTag = Integer.valueOf((String) view.getTag());
 
-
+        System.out.println(outerTag + ": " + innerTag);
 
         if(fieldIsValidMove(outerTag, innerTag)){
             doMove(outerTag, innerTag, view);
+            return true;
         }else {
             return false;
         }
-
-
-        return false;
     }
 
     public boolean isStillActive() {
         return !gameOver;
     }
 
-    public void doMove(int outerFieldId, int innerFieldId, Button view){
+    private void doMove(int outerFieldId, int innerFieldId, Button view){
 
-        final FieldState activePlayer = turnCounter % 2 == 0 ? FieldState.PLAYER_X : FieldState.PLAYER_O;
+        final FieldState activePlayer = getActivePlayer();
         field[outerFieldId].doMove(innerFieldId, activePlayer);
         if(activePlayer == FieldState.PLAYER_X){
             view.setBackgroundResource(R.drawable.tic_tac_toe_x);
@@ -103,11 +121,17 @@ public class Game {
         turnCounter++;
         activeOuterField = field[innerFieldId].hasWinner() ? -1 : innerFieldId;
         checkGameOver();
+
+        updateStatusField();
         changeEnabledFieldsVisualisation();
 
     }
 
-    public boolean fieldIsValidMove(int outerFieldId, int innerFieldId){
+    private FieldState getActivePlayer(){
+        return turnCounter % 2 == 0 ? FieldState.PLAYER_X : FieldState.PLAYER_O;
+    }
+
+    private boolean fieldIsValidMove(int outerFieldId, int innerFieldId){
         final boolean outerFieldValid = outerFieldIsValid(outerFieldId);
 
         final boolean innerFieldValid = field[outerFieldId].isValidMove(innerFieldId);
@@ -115,7 +139,7 @@ public class Game {
         return outerFieldValid && innerFieldValid;
     }
 
-    public boolean outerFieldIsValid(int outerFieldId){
+    private boolean outerFieldIsValid(int outerFieldId){
         final boolean outerFieldValidMove = activeOuterField == -1 || activeOuterField == outerFieldId;
 
         final boolean innerFieldHasWinner = field[outerFieldId].hasWinner();

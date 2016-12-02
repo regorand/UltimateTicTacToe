@@ -1,13 +1,19 @@
 package janluca.de.ultimatetictactoe.game;
 
-import java.lang.reflect.Field;
-
-/**
- * Created by root on 29.11.16.
- */
 
 public enum FieldState {
-    EMPTY,
-    PLAYER_X,
-    PLAYER_O
+    EMPTY(""),
+    PLAYER_X("Player X"),
+    PLAYER_O("Player O");
+
+    private String value;
+
+    FieldState(String value){
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

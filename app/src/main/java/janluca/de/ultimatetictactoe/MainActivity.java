@@ -1,5 +1,6 @@
 package janluca.de.ultimatetictactoe;
 
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,7 +22,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         game = new Game(this);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        findViewById(R.id.resetButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("test");
+                resetGame();
+            }
+        });
     }
 
 
@@ -29,5 +37,9 @@ public class MainActivity extends AppCompatActivity {
         if(game.isStillActive()){
             game.handleClickOnView((Button) view);
         }
+    }
+
+    public void resetGame(){
+        game = new Game(this);
     }
 }
