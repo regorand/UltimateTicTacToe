@@ -1,6 +1,8 @@
 package janluca.de.ultimatetictactoe.game;
 
 import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -36,10 +38,6 @@ public class Game {
     public Game(MainActivity activity){
         this.activity = activity;
 
-        saveOuterFieldViews();
-        updateStatusField();
-        clearField();
-
         field = new InnerField[9];
         for (int i = 0; i < field.length; i++) {
             field[i] = new InnerField();
@@ -49,19 +47,24 @@ public class Game {
         gameOver = false;
         activeOuterField = -1;
         turnCounter = 0;
+
+        saveOuterFieldViews();
+        updateStatusField();
+        clearField();
+        changeEnabledFieldsVisualisation();
     }
 
     private void clearField(){
         for (View outerFieldView : outerFieldViews) {
+            View innerFieldParent = outerFieldView.findViewById(R.id.innerFieldParent);
             for(int i = 0; i < 9; i++){
-                outerFieldView.findViewWithTag(String.valueOf(i)).setBackground(null);
+                innerFieldParent.findViewWithTag(String.valueOf(i)).setBackground(null);
             }
         }
     }
 
     private void changeEnabledFieldsVisualisation(){
-
-        //maybe get colors with leess transparency, when player clicks on not available field
+        //maybe get colors with less transparency, when player clicks on not available field
 
         int enabled, disabled;
 
