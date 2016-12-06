@@ -37,7 +37,7 @@ public class MenuFragment extends Fragment{
     @Override
     public void onStart() {
         super.onStart();
-        getActivity().findViewById(R.id.playButton).setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.TwoPlayerButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((MainActivity) getActivity()).startGame();
