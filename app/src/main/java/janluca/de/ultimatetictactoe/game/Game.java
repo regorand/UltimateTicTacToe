@@ -6,6 +6,7 @@ import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.lang.reflect.Field;
@@ -18,6 +19,8 @@ public class Game {
 
     private View[] outerFieldViews;
 
+    final View rootView;
+
     private final int[] OUTER_FIELD_VIEW_IDS = {R.id.outerFieldZero, R.id.outerFieldOne, R.id.outerFieldTwo,
                                                 R.id.outerFieldThree, R.id.outerFieldFour, R.id.outerFieldFive,
                                                 R.id.outerFieldSix, R.id.outerFieldSeven, R.id.outerFieldEight};
@@ -29,14 +32,15 @@ public class Game {
 
     private boolean gameOver;
 
-    private MainActivity activity;
-
     private int turnCounter;
 
     private InnerField[] field;
 
-    public Game(MainActivity activity){
-        this.activity = activity;
+
+    //TODO create AI
+    //http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-practical-guide-to-building-a-complete-game-a-r784
+    public Game(View rootView){
+        this.rootView = rootView;
 
         field = new InnerField[9];
         for (int i = 0; i < field.length; i++) {
@@ -69,11 +73,11 @@ public class Game {
         int enabled, disabled;
 
         if(gameOver){
-            enabled = activity.getResources().getColor(R.color.field_white);
-            disabled = activity.getResources().getColor(R.color.field_white);
+            enabled = rootView.getResources().getColor(R.color.field_white);
+            disabled = rootView.getResources().getColor(R.color.field_white);
         }else {
-            enabled = activity.getResources().getColor(R.color.field_enabled);
-            disabled = activity.getResources().getColor(R.color.field_disabled);
+            enabled = rootView.getResources().getColor(R.color.field_enabled);
+            disabled = rootView.getResources().getColor(R.color.field_disabled);
         }
         for (int i = 0; i < outerFieldViews.length; i++) {
             if(outerFieldIsValid(i)){
@@ -85,7 +89,7 @@ public class Game {
     }
 
     private void updateStatusField(){
-        TextView statusView = (TextView) activity.findViewById(R.id.statusText);
+        TextView statusView = (TextView) rootView.findViewById(R.id.statusText);
         if(gameOver){
             statusView.setText(winner.toString() + " won the game!");
         } else {
@@ -188,7 +192,7 @@ public class Game {
     private void saveOuterFieldViews(){
         outerFieldViews = new View[OUTER_FIELD_VIEW_IDS.length];
         for(int i = 0; i < OUTER_FIELD_VIEW_IDS.length; i++){
-            outerFieldViews[i] = activity.findViewById(OUTER_FIELD_VIEW_IDS[i]);
+            outerFieldViews[i] = rootView.findViewById(OUTER_FIELD_VIEW_IDS[i]);
         }
     }
 }

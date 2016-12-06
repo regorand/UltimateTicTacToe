@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import janluca.de.ultimatetictactoe.MainActivity;
 import janluca.de.ultimatetictactoe.R;
 import janluca.de.ultimatetictactoe.game.Game;
 
@@ -24,8 +23,8 @@ public class GameFragment extends Fragment{
 
     }
 
-    public void registerGame(MainActivity activity){
-        game = new Game(activity);
+    public void registerGame(){
+        game = new Game(getView());
     }
 
     public GameFragment(){
@@ -35,15 +34,19 @@ public class GameFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.game_fragment, container, false);
-
-        return view;
+        return inflater.inflate(R.layout.game_fragment_layout, container, false);
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        registerGame((MainActivity) getActivity());
+    public void onStart() {
+        super.onStart();
+        registerGame();
+        getView().findViewById(R.id.resetButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetGame();
+            }
+        });
     }
 
     public void handleClick(View view){
@@ -53,7 +56,7 @@ public class GameFragment extends Fragment{
     }
 
     public void resetGame(){
-        game = new Game((MainActivity) getActivity());
+        game = new Game(getView());
     }
 
 }

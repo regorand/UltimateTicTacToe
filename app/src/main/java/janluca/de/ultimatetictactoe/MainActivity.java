@@ -12,13 +12,11 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import janluca.de.ultimatetictactoe.fragments.GameFragment;
+import janluca.de.ultimatetictactoe.fragments.HelpFragment;
 import janluca.de.ultimatetictactoe.fragments.MenuFragment;
 import janluca.de.ultimatetictactoe.game.Game;
 
 public class MainActivity extends AppCompatActivity {
-
-
-    //TODO eventually create menu (fragments)
 
     GameFragment activeGame;
 
@@ -32,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.root_layout, MenuFragment.newInstance(), "menu")
+                    .add(R.id.root_layout, MenuFragment.newInstance(), MenuFragment.FRAGMENT_MANAGER_ID)
                     .commit();
         }
     }
@@ -55,11 +53,10 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    public void changeActiveFragment(Fragment fragment, String id){
-
+    public void showHelp(){
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.root_layout, fragment, id)
+                .replace(R.id.root_layout, HelpFragment.newInstance(), HelpFragment.FRAGMENT_MANAGER_ID)
                 .addToBackStack(null)
                 .commit();
     }

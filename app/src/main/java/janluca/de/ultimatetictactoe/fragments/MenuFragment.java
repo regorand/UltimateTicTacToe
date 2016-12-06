@@ -12,6 +12,8 @@ import janluca.de.ultimatetictactoe.R;
 
 public class MenuFragment extends Fragment{
 
+    public static final String FRAGMENT_MANAGER_ID = "menu";
+
     public static MenuFragment newInstance(){
         return new MenuFragment();
     }
@@ -39,6 +41,12 @@ public class MenuFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 ((MainActivity) getActivity()).startGame();
+            }
+        });
+        getActivity().findViewById(R.id.helpButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).showHelp();
             }
         });
     }
