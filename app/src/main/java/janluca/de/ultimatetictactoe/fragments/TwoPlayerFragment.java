@@ -12,14 +12,14 @@ import android.widget.Button;
 import janluca.de.ultimatetictactoe.R;
 import janluca.de.ultimatetictactoe.game.Game;
 
-public class GameFragment extends Fragment{
+public class TwoPlayerFragment extends Fragment implements playableFragment {
 
     public static final String FRAGMENT_MANAGER_ID = "game";
 
     Game game;
 
-    public static GameFragment newInstance(){
-        return new GameFragment();
+    public static TwoPlayerFragment newInstance(){
+        return new TwoPlayerFragment();
 
     }
 
@@ -27,8 +27,7 @@ public class GameFragment extends Fragment{
         game = new Game(getView());
     }
 
-    public GameFragment(){
-
+    public TwoPlayerFragment(){
     }
 
     @Nullable
@@ -49,6 +48,7 @@ public class GameFragment extends Fragment{
         });
     }
 
+    @Override
     public void handleClick(View view){
         if(game.isStillActive()){
             game.handleClickOnView((Button) view);

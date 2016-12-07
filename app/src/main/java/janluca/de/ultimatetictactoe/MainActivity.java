@@ -1,24 +1,17 @@
 package janluca.de.ultimatetictactoe;
 
 import android.content.pm.ActivityInfo;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.Interpolator;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
-import janluca.de.ultimatetictactoe.fragments.GameFragment;
+import janluca.de.ultimatetictactoe.fragments.TwoPlayerFragment;
 import janluca.de.ultimatetictactoe.fragments.HelpFragment;
 import janluca.de.ultimatetictactoe.fragments.MenuFragment;
-import janluca.de.ultimatetictactoe.game.Game;
 
 public class MainActivity extends AppCompatActivity {
 
-    GameFragment activeGame;
+    TwoPlayerFragment activeGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,19 +29,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleClick(View view){
+        //maybe make TwoPlayerFragment abstract class/interface and let SinglePlayerFragment and DoublePlayerFragment implement it
+        // -> scalable for online
         if(activeGame != null){
             activeGame.handleClick(view);
         }
     }
 
+    public void startSinglePlayerGame(){
+
+    }
+
     public void startGame(){
-        GameFragment fragment = GameFragment.newInstance();
+        TwoPlayerFragment fragment = TwoPlayerFragment.newInstance();
 
         activeGame = fragment;
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.root_layout, fragment, GameFragment.FRAGMENT_MANAGER_ID)
+                .replace(R.id.root_layout, fragment, TwoPlayerFragment.FRAGMENT_MANAGER_ID)
                 .addToBackStack(null)
                 .commit();
     }
