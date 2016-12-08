@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import janluca.de.ultimatetictactoe.AI.AIController;
+import janluca.de.ultimatetictactoe.AI.AIGameController;
 import janluca.de.ultimatetictactoe.R;
 
-public class SinglePlayerFragment extends Fragment implements playableFragment {
+public class SinglePlayerFragment extends Fragment implements PlayableFragment {
 
-    private AIController aiController;
+    final static public String FRAGMENT_MANAGER_ID = "singlePlayer";
+
+    private AIGameController aiGameController;
 
     public static SinglePlayerFragment newInstance(){
         return new SinglePlayerFragment();
@@ -31,7 +33,7 @@ public class SinglePlayerFragment extends Fragment implements playableFragment {
     @Override
     public void onStart() {
         super.onStart();
-        aiController = new AIController(getView());
+        aiGameController = new AIGameController(getView());
     }
 
     @Override

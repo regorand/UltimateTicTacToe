@@ -5,13 +5,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import janluca.de.ultimatetictactoe.fragments.PlayableFragment;
+import janluca.de.ultimatetictactoe.fragments.SinglePlayerFragment;
 import janluca.de.ultimatetictactoe.fragments.TwoPlayerFragment;
 import janluca.de.ultimatetictactoe.fragments.HelpFragment;
 import janluca.de.ultimatetictactoe.fragments.MenuFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    TwoPlayerFragment activeGame;
+    PlayableFragment activeGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,18 +31,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleClick(View view){
-        //maybe make TwoPlayerFragment abstract class/interface and let SinglePlayerFragment and DoublePlayerFragment implement it
-        // -> scalable for online
         if(activeGame != null){
             activeGame.handleClick(view);
         }
     }
 
     public void startSinglePlayerGame(){
+        SinglePlayerFragment fragment = SinglePlayerFragment.newInstance();
 
+        activeGame = fragment;
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.root_layout, fragment, SinglePlayerFragment.FRAGMENT_MANAGER_ID)
+                .addToBackStack(null)
+                .commit();
     }
 
-    public void startGame(){
+    public void startTwoPlayerGame(){
         TwoPlayerFragment fragment = TwoPlayerFragment.newInstance();
 
         activeGame = fragment;

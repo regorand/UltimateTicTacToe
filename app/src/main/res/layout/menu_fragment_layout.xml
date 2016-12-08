@@ -10,16 +10,16 @@
         android:layout_weight="1"/>
 
     <Button
-        android:text="2 Player"
+        android:text="@string/two_player_button_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/TwoPlayerButton"
+        android:id="@+id/twoPlayerButton"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp" />
 
     <Button
-        android:text="1 Player"
+        android:text="@string/single_player_button_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/singlePlayerButton"
@@ -28,7 +28,7 @@
         android:layout_marginRight="10dp" />
 
     <Button
-        android:text="How to play"
+        android:text="@string/how_to_button_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/helpButton"

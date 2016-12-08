@@ -12,9 +12,9 @@ import android.widget.Button;
 import janluca.de.ultimatetictactoe.R;
 import janluca.de.ultimatetictactoe.game.Game;
 
-public class TwoPlayerFragment extends Fragment implements playableFragment {
+public class TwoPlayerFragment extends Fragment implements PlayableFragment {
 
-    public static final String FRAGMENT_MANAGER_ID = "game";
+    public static final String FRAGMENT_MANAGER_ID = "twoPlayer";
 
     Game game;
 
@@ -33,7 +33,7 @@ public class TwoPlayerFragment extends Fragment implements playableFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.game_fragment_layout, container, false);
+        return inflater.inflate(R.layout.two_player_fragment_layout, container, false);
     }
 
     @Override

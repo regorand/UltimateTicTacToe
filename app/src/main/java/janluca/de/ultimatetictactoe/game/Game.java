@@ -1,23 +1,22 @@
 package janluca.de.ultimatetictactoe.game;
 
-import android.graphics.Color;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.lang.reflect.Field;
+import java.util.zip.Inflater;
 
-import janluca.de.ultimatetictactoe.MainActivity;
 import janluca.de.ultimatetictactoe.R;
+import janluca.de.ultimatetictactoe.TicTacToeField;
+import janluca.de.ultimatetictactoe.TicTacToeLayout;
 
 
 public class Game {
 
-    private View[] outerFieldViews;
+    private FrameLayout[] outerFieldViews;
 
     final View rootView;
 
@@ -36,15 +35,12 @@ public class Game {
 
     private InnerField[] field;
 
-
-    //TODO create AI
-    //http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-practical-guide-to-building-a-complete-game-a-r784
     public Game(View rootView){
         this.rootView = rootView;
 
         field = new InnerField[9];
         for (int i = 0; i < field.length; i++) {
-            field[i] = new InnerField();
+            field[i] = new InnerField(this, i);
         }
 
         winner = FieldState.EMPTY;
@@ -59,7 +55,15 @@ public class Game {
     }
 
     private void clearField(){
-        for (View outerFieldView : outerFieldViews) {
+
+        for (FrameLayout outerFieldView : outerFieldViews) {
+            outerFieldView.removeAllViews();
+
+            LayoutInflater factory = LayoutInflater.from(rootView.getContext());
+
+
+
+            outerFieldView.addView(factory.inflate(R.layout.tic_tac_toe_small, null));
             View innerFieldParent = outerFieldView.findViewById(R.id.innerFieldParent);
             for(int i = 0; i < 9; i++){
                 innerFieldParent.findViewWithTag(String.valueOf(i)).setBackground(null);
@@ -99,8 +103,10 @@ public class Game {
 
     public boolean handleClickOnView(Button view){
         //felt dirty wrting this - sorry
-        int outerTag = Integer.valueOf((String) ((FrameLayout) view.getParent().getParent().getParent()).getTag()),
+        int outerTag = Integer.valueOf((String) ((View) view.getParent().getParent().getParent()).getTag()),
             innerTag = Integer.valueOf((String) view.getTag());
+
+
 
         System.out.println(outerTag + ": " + innerTag);
 
@@ -190,9 +196,21 @@ public class Game {
     }
 
     private void saveOuterFieldViews(){
-        outerFieldViews = new View[OUTER_FIELD_VIEW_IDS.length];
+        outerFieldViews = new FrameLayout[OUTER_FIELD_VIEW_IDS.length];
         for(int i = 0; i < OUTER_FIELD_VIEW_IDS.length; i++){
-            outerFieldViews[i] = rootView.findViewById(OUTER_FIELD_VIEW_IDS[i]);
+            outerFieldViews[i] = (FrameLayout) rootView.findViewById(OUTER_FIELD_VIEW_IDS[i]);
         }
+    }
+
+    public void updateInnerFieldWon(int id, FieldState winner){
+        FrameLayout layout = (FrameLayout) rootView.findViewById(OUTER_FIELD_VIEW_IDS[id]);
+        layout.removeAllViews();
+        ImageView view = new ImageView(rootView.getContext());
+        if(winner == FieldState.PLAYER_X){
+            view.setImageResource(R.drawable.tic_tac_toe_x);
+        } else if(winner == FieldState.PLAYER_O){
+            view.setImageResource(R.drawable.tic_tac_toe_o);
+        }
+        layout.addView(view);
     }
 }

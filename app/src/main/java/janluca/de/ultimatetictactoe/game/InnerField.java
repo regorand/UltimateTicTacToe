@@ -3,13 +3,19 @@ package janluca.de.ultimatetictactoe.game;
 
 public class InnerField {
 
+    private Game game;
+
+    int fieldId;
+
     FieldState winner;
 
     private boolean hasWinner;
 
     private FieldState[] field;
 
-    public InnerField(){
+    public InnerField(Game game, int fieldId){
+        this.game = game;
+        this.fieldId = fieldId;
         field = new FieldState[9];
         for (int i = 0; i < field.length; i++) {
             field[i] = FieldState.EMPTY;
@@ -59,6 +65,7 @@ public class InnerField {
     private void setWinner(FieldState winner){
         this.winner = winner;
         hasWinner = true;
+        game.updateInnerFieldWon(fieldId, winner);
         System.out.println("field won for " + winner.toString());
     }
 

@@ -29,18 +29,18 @@ public class MenuFragment extends Fragment{
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
-        getActivity().findViewById(R.id.TwoPlayerButton).setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.twoPlayerButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) getActivity()).startGame();
+                ((MainActivity) getActivity()).startTwoPlayerGame();
+            }
+        });
+        getActivity().findViewById(R.id.singlePlayerButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).startSinglePlayerGame();
             }
         });
         getActivity().findViewById(R.id.helpButton).setOnClickListener(new View.OnClickListener() {
