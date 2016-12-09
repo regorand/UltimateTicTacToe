@@ -7,6 +7,8 @@ public class InnerField {
 
     int fieldId;
 
+    private int amountMoves;
+
     FieldState winner;
 
     private boolean hasWinner;
@@ -22,6 +24,7 @@ public class InnerField {
         }
         winner = FieldState.EMPTY;
         hasWinner = false;
+        amountMoves = 0;
     }
 
     public boolean isValidMove(int fieldId){
@@ -30,6 +33,7 @@ public class InnerField {
 
     public void doMove(int fieldId, FieldState newState){
         field[fieldId] = newState;
+        amountMoves++;
         checkGameOver();
     }
 
@@ -69,8 +73,8 @@ public class InnerField {
         System.out.println("field won for " + winner.toString());
     }
 
-    public boolean hasWinner(){
-        return hasWinner;
+    public boolean isOver(){
+        return hasWinner || amountMoves >= 9;
     }
 
     public FieldState getWinner(){

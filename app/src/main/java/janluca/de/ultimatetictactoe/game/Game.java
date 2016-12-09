@@ -7,11 +7,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.zip.Inflater;
-
 import janluca.de.ultimatetictactoe.R;
-import janluca.de.ultimatetictactoe.TicTacToeField;
-import janluca.de.ultimatetictactoe.TicTacToeLayout;
 
 
 public class Game {
@@ -132,7 +128,7 @@ public class Game {
             view.setBackgroundResource(R.drawable.tic_tac_toe_o);
         }
         turnCounter++;
-        activeOuterField = field[innerFieldId].hasWinner() ? -1 : innerFieldId;
+        activeOuterField = field[innerFieldId].isOver() ? -1 : innerFieldId;
         checkGameOver();
 
         updateStatusField();
@@ -155,9 +151,9 @@ public class Game {
     private boolean outerFieldIsValid(int outerFieldId){
         final boolean outerFieldValidMove = activeOuterField == -1 || activeOuterField == outerFieldId;
 
-        final boolean innerFieldHasWinner = field[outerFieldId].hasWinner();
+        final boolean innerFieldIsOver = field[outerFieldId].isOver();
 
-        return outerFieldValidMove && !innerFieldHasWinner;
+        return outerFieldValidMove && !innerFieldIsOver;
     }
 
     private void setWinner(FieldState winner){

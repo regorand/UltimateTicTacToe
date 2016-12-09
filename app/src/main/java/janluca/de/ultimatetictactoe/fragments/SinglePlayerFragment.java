@@ -30,6 +30,7 @@ public class SinglePlayerFragment extends Fragment implements PlayableFragment {
         return inflater.inflate(R.layout.single_player_fragment_layout, container, false);
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
