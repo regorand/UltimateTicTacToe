@@ -14,13 +14,15 @@ public class Game {
 
     private FrameLayout[] outerFieldViews;
 
+    private final boolean isTwoPlayerGame;
+
     final View rootView;
 
     private final int[] OUTER_FIELD_VIEW_IDS = {R.id.outerFieldZero, R.id.outerFieldOne, R.id.outerFieldTwo,
                                                 R.id.outerFieldThree, R.id.outerFieldFour, R.id.outerFieldFive,
                                                 R.id.outerFieldSix, R.id.outerFieldSeven, R.id.outerFieldEight};
 
-    //0 = all, 1 = topleft, 3 top right etc.
+    //-1 = all, 0 = topleft, 2 top right etc.
     private int activeOuterField;
 
     private FieldState winner;
@@ -31,7 +33,8 @@ public class Game {
 
     private InnerField[] field;
 
-    public Game(View rootView){
+    public Game(View rootView, boolean isTwoPlayerGame){
+        this.isTwoPlayerGame = isTwoPlayerGame;
         this.rootView = rootView;
 
         field = new InnerField[9];
@@ -89,16 +92,18 @@ public class Game {
     }
 
     private void updateStatusField(){
-        TextView statusView = (TextView) rootView.findViewById(R.id.statusText);
-        if(gameOver){
-            statusView.setText(winner.toString() + " won the game!");
-        } else {
-            statusView.setText("It's " + getActivePlayer().toString() + "'s turn");
+        if(isTwoPlayerGame){
+            TextView statusView = (TextView) rootView.findViewById(R.id.statusText);
+            if(gameOver){
+                statusView.setText(winner.toString() + " won the game!");
+            } else {
+                statusView.setText("It's " + getActivePlayer().toString() + "'s turn");
+            }
         }
     }
 
     public boolean handleClickOnView(Button view){
-        //felt dirty wrting this - sorry
+        //felt dirty writing this - sorry
         int outerTag = Integer.valueOf((String) ((View) view.getParent().getParent().getParent()).getTag()),
             innerTag = Integer.valueOf((String) view.getTag());
 
@@ -134,6 +139,19 @@ public class Game {
         updateStatusField();
         changeEnabledFieldsVisualisation();
 
+    }
+
+
+    public GameState getCurrentState(){
+        FieldState[] outerFields = new FieldState[9];
+        for (int i = 0; i < outerFields.length; i++) {
+            outerFields[i] = field[i].getWinner();
+        }
+        FieldState[][] innerFields = new FieldState[9][];
+        for(int i = 0; i < innerFields.length; i++){
+            innerFields[i] = field[i].getFieldStatus();
+        }
+        return new GameState(outerFields, innerFields, activeOuterField);
     }
 
     private FieldState getActivePlayer(){

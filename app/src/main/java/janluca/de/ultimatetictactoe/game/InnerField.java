@@ -27,6 +27,10 @@ public class InnerField {
         amountMoves = 0;
     }
 
+    public FieldState[] getFieldStatus(){
+        return field;
+    }
+
     public boolean isValidMove(int fieldId){
         return field[fieldId] == FieldState.EMPTY;
     }

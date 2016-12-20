@@ -4,4 +4,5 @@ import android.view.View;
 
 public interface PlayableFragment {
     void handleClick(View rootView);
+    void resetGame();
 }
