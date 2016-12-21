@@ -5,9 +5,11 @@ public class InnerFieldState {
 
     private FieldState[] field;
 
+    private boolean isOver;
 
-    public InnerFieldState(FieldState[] field){
+    public InnerFieldState(FieldState[] field, boolean hasWinner){
         this.field = field;
+        this.isOver = hasWinner;
     }
 
     public FieldState getStateById(int id){
@@ -18,4 +20,7 @@ public class InnerFieldState {
         return field;
     }
 
+    public boolean isOver(){
+        return isOver;
+    }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import janluca.de.ultimatetictactoe.game.FieldState;
 import janluca.de.ultimatetictactoe.game.GameState;
+import janluca.de.ultimatetictactoe.game.InnerFieldState;
 import janluca.de.ultimatetictactoe.game.Move;
 
 public class Ai {
@@ -34,7 +35,19 @@ public class Ai {
                 }
             }
         } else {
-            //logic for getting allowed moves when all free spaces are allowed
+            InnerFieldState[] innerField = gameState.getInnerFieldStates();
+            for (int i = 0; i < innerField.length ; i++) {
+                if(!innerField[i].isOver()){
+                    FieldState[] innerFieldStates = gameState.getInnerFieldStateById(i).getStates();
+                    for(int j = 0; j < innerFieldStates.length; j++){
+                        if(innerFieldStates[j] == FieldState.EMPTY){
+                            allowedMoves.add(new Move(activeOuterField, j));
+                        }
+                    }
+                }
+            }{
+
+            }
         }
         return allowedMoves;
     }

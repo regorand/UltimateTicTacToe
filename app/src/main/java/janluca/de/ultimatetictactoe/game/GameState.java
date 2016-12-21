@@ -8,11 +8,11 @@ public class GameState {
 
     private int activeOuterField;
 
-    public GameState(FieldState[] outerFields, FieldState[][] innerFields, int activeOuterField){
+    public GameState(FieldState[] outerFields, FieldState[][] innerFields, int activeOuterField, boolean[] innerFieldsOver){
         outerFieldStatus = outerFields;
         innerFieldStates = new InnerFieldState[9];
         for (int i = 0; i < innerFieldStates.length; i++){
-            innerFieldStates[i] = new InnerFieldState(innerFields[i]);
+            innerFieldStates[i] = new InnerFieldState(innerFields[i], innerFieldsOver[i]);
         }
         this.activeOuterField = activeOuterField;
     }

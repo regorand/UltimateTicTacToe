@@ -6,17 +6,23 @@ import android.widget.Button;
 
 import janluca.de.ultimatetictactoe.game.Game;
 import janluca.de.ultimatetictactoe.game.GameState;
+import janluca.de.ultimatetictactoe.game.Move;
 
 public class AIGameController {
 
     private Game game;
 
+    private Ai ai;
+
     public AIGameController(View rootView){
         game = new Game(rootView, false);
+        ai = new Ai();
     }
 
     public void handleClick(View view){
-        game.handleClickOnView((Button) view);
+        if(game.isStillActive()){
+            game.handleClickOnView((Button) view);
+        }
 
 
         doAIMove();
@@ -25,9 +31,9 @@ public class AIGameController {
     private void doAIMove(){
         final GameState gameState = game.getCurrentState();
 
+        Move move = ai.decideOnMove(gameState);
 
-
-
+        game.doMove(move);
     }
 
     //TODO create AI

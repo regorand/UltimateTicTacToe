@@ -123,6 +123,13 @@ public class Game {
         return !gameOver;
     }
 
+    public void doMove(Move move){
+        Button view = (Button) outerFieldViews[move.getOuterFieldId()].
+                findViewWithTag(String.valueOf(move.getInnerFieldId()));
+
+        doMove(move.getOuterFieldId(), move.getInnerFieldId(), view);
+    }
+
     private void doMove(int outerFieldId, int innerFieldId, Button view){
 
         final FieldState activePlayer = getActivePlayer();
@@ -151,7 +158,13 @@ public class Game {
         for(int i = 0; i < innerFields.length; i++){
             innerFields[i] = field[i].getFieldStatus();
         }
-        return new GameState(outerFields, innerFields, activeOuterField);
+
+        boolean[] innerFieldsWon = new boolean[9];
+        for (int i = 0; i < innerFields.length; i++) {
+            innerFieldsWon[i] = field[i].isOver();
+        }
+
+        return new GameState(outerFields, innerFields, activeOuterField, innerFieldsWon);
     }
 
     private FieldState getActivePlayer(){
