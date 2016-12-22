@@ -1,6 +1,7 @@
 package janluca.de.ultimatetictactoe.AI;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import janluca.de.ultimatetictactoe.game.FieldState;
 import janluca.de.ultimatetictactoe.game.GameState;
@@ -18,10 +19,8 @@ public class Ai {
 
     public Move decideOnMove(final GameState gameState){
         ArrayList<Move> allowedMoves = getAllowedMoves(gameState);
-
-
-
-        return allowedMoves.get((int) Math.random() % allowedMoves.size());
+        Random r = new Random();
+        return allowedMoves.get(r.nextInt(allowedMoves.size()));
     }
 
     private ArrayList<Move> getAllowedMoves(GameState gameState){
@@ -41,7 +40,7 @@ public class Ai {
                     FieldState[] innerFieldStates = gameState.getInnerFieldStateById(i).getStates();
                     for(int j = 0; j < innerFieldStates.length; j++){
                         if(innerFieldStates[j] == FieldState.EMPTY){
-                            allowedMoves.add(new Move(activeOuterField, j));
+                            allowedMoves.add(new Move(i, j));
                         }
                     }
                 }
