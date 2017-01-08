@@ -10,20 +10,43 @@ import janluca.de.ultimatetictactoe.game.Move;
 
 public class Ai {
 
-    //TODO difficulty (as enum ?)
+    private Difficulty difficulty;
 
-    public Ai(){
-
+    public Ai(Difficulty difficulty){
+        this.difficulty = difficulty;
     }
-
 
     public Move decideOnMove(final GameState gameState){
-        ArrayList<Move> allowedMoves = getAllowedMoves(gameState);
-        Random r = new Random();
-        return allowedMoves.get(r.nextInt(allowedMoves.size()));
+        Move[] allowedMoves = getAllowedMoves(gameState);
+        int[] scores = evaluateMoves(allowedMoves);
+
+        return allowedMoves[getMoveIndexByDifficulty(scores)];
     }
 
-    private ArrayList<Move> getAllowedMoves(GameState gameState){
+    private int getMoveIndexByDifficulty(int[] scores){#
+        //either get random move of top x for different difficulties or use different levels of recursion and prediction in evaluateMoves()
+        if(difficulty == Difficulty.VERY_EASY){
+            Random r = new Random();
+            return r.nextInt(scores.length);
+        } else if(difficulty == Difficulty.EASY){
+
+        } else if(difficulty == Difficulty.MEDIUM){
+
+        } else if(difficulty == Difficulty.HARD){
+
+        }
+        return 0;
+    }
+
+    private int[] evaluateMoves(Move[] allowedMoves){
+        int [] scores = new int[allowedMoves.length];
+        for(Move move: allowedMoves){
+            int score = 0;
+        }
+        return scores;
+    }
+
+    private Move[] getAllowedMoves(GameState gameState){
         ArrayList<Move> allowedMoves = new ArrayList<>();
         int activeOuterField = gameState.getActiveOuterField();
         if(activeOuterField != -1){
@@ -48,7 +71,7 @@ public class Ai {
 
             }
         }
-        return allowedMoves;
+        return (Move[]) allowedMoves.toArray();
     }
 
 

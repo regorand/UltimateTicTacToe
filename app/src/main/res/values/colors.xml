@@ -8,4 +8,5 @@
     <color name="field_disabled">#F2F2F2</color>
     <color name="field_enabled">#8050f442</color>
     <color name="field_white">#FFFFFF</color>
+    <color name="field_blue">#5f8def</color>
 </resources>

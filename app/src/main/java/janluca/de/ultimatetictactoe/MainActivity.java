@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import janluca.de.ultimatetictactoe.AI.Difficulty;
+import janluca.de.ultimatetictactoe.fragments.ChooseDifficultyFragment;
 import janluca.de.ultimatetictactoe.fragments.PlayableFragment;
 import janluca.de.ultimatetictactoe.fragments.SinglePlayerFragment;
 import janluca.de.ultimatetictactoe.fragments.TwoPlayerFragment;
@@ -36,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startSinglePlayerGame(){
-        SinglePlayerFragment fragment = SinglePlayerFragment.newInstance();
+    public void startSinglePlayerGame(Difficulty difficulty){
+        SinglePlayerFragment fragment = SinglePlayerFragment.newInstance(difficulty);
 
         activeGame = fragment;
 
@@ -59,6 +61,15 @@ public class MainActivity extends AppCompatActivity {
                 .addToBackStack(null)
                 .commit();
     }
+
+    public void chooseDifficulty(){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.root_layout, ChooseDifficultyFragment.newInstance(), ChooseDifficultyFragment.FRAGMENT_MANAGER_ID)
+                .addToBackStack(null)
+                .commit();
+    }
+
 
     public void showHelp(){
         getSupportFragmentManager()

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_difficulty"
+        android:textAlignment="center"
+        android:textSize="30sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <Button
+        android:text="@string/very_easy_bot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/very_easy_bot_button"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
+
+    <Button
+        android:text="@string/easy_bot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/easy_bot_button"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
+
+    <Button
+        android:text="@string/medium_bot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/medium_bot_button"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
+
+    <Button
+        android:text="@string/hard_bot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/hard_bot_button"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+</LinearLayout>

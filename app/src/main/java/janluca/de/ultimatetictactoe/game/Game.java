@@ -33,6 +33,8 @@ public class Game {
 
     private InnerField[] field;
 
+    private int[] winningFieldIds;
+
     public Game(View rootView, boolean isTwoPlayerGame){
         this.isTwoPlayerGame = isTwoPlayerGame;
         this.rootView = rootView;
@@ -74,6 +76,7 @@ public class Game {
         //maybe get colors with less transparency, when player clicks on not available field
 
         int enabled, disabled;
+        int blue = rootView.getResources().getColor(R.color.field_blue);
 
         if(gameOver){
             enabled = rootView.getResources().getColor(R.color.field_white);
@@ -89,16 +92,19 @@ public class Game {
                 outerFieldViews[i].setBackgroundColor(disabled);
             }
         }
+        if(winningFieldIds != null){
+            outerFieldViews[winningFieldIds[0]].setBackgroundColor(blue);
+            outerFieldViews[winningFieldIds[1]].setBackgroundColor(blue);
+            outerFieldViews[winningFieldIds[2]].setBackgroundColor(blue);
+        }
     }
 
     private void updateStatusField(){
-        if(isTwoPlayerGame){
-            TextView statusView = (TextView) rootView.findViewById(R.id.statusText);
-            if(gameOver){
-                statusView.setText(winner.toString() + " won the game!");
-            } else {
-                statusView.setText("It's " + getActivePlayer().toString() + "'s turn");
-            }
+        TextView statusView = (TextView) rootView.findViewById(R.id.statusText);
+        if(gameOver){
+            statusView.setText(winner.toString() + " won the game!");
+        } else {
+            statusView.setText("It's " + getActivePlayer().toString() + "'s turn");
         }
     }
 
@@ -124,10 +130,11 @@ public class Game {
     }
 
     public void doMove(Move move){
-        Button view = (Button) outerFieldViews[move.getOuterFieldId()].
+        Button buttonView = (Button) outerFieldViews[move.getOuterFieldId()].
+                findViewById(R.id.innerFieldParent).
                 findViewWithTag(String.valueOf(move.getInnerFieldId()));
 
-        doMove(move.getOuterFieldId(), move.getInnerFieldId(), view);
+        doMove(move.getOuterFieldId(), move.getInnerFieldId(), buttonView);
     }
 
     private void doMove(int outerFieldId, int innerFieldId, Button view){
@@ -187,17 +194,24 @@ public class Game {
         return outerFieldValidMove && !innerFieldIsOver;
     }
 
-    private void setWinner(FieldState winner){
+    private void setWinner(FieldState winner, int[] winningFieldIds){
+        this.winningFieldIds = winningFieldIds;
+
+
         this.winner = winner;
         gameOver = true;
         System.out.println("entire game won for " + winner.toString());
     }
 
     private void checkGameOver(){
+        int[] winningFieldIds = new int[3];
         //checks vertical winning
         for(int i = 0; i < 3; i++){
             if(field[i].getWinner() == field[i+3].getWinner() && field[i].getWinner() == field[i+6].getWinner() && field[i].getWinner() != FieldState.EMPTY){
-                setWinner(field[i].getWinner());
+                winningFieldIds[0] = i;
+                winningFieldIds[1] = i + 3;
+                winningFieldIds[2] = i + 6;
+                setWinner(field[i].getWinner(), winningFieldIds);
                 return;
             }
         }
@@ -205,20 +219,29 @@ public class Game {
         //checks horizontal winning
         for(int i = 0; i <= 6; i+=3){
             if(field[i].getWinner() == field[i+1].getWinner() && field[i].getWinner() == field[i+2].getWinner() && field[i].getWinner() != FieldState.EMPTY){
-                setWinner(field[i].getWinner());
+                winningFieldIds[0] = i;
+                winningFieldIds[1] = i + 1;
+                winningFieldIds[2] = i + 2;
+                setWinner(field[i].getWinner(), winningFieldIds);
                 return;
             }
         }
 
         //diagonal winning check top-left to bottom-right
         if(field[0].getWinner() == field[4].getWinner() && field[4].getWinner() == field[8].getWinner() && field[4].getWinner() != FieldState.EMPTY){
-            setWinner(field[4].getWinner());
+            winningFieldIds[0] = 0;
+            winningFieldIds[1] = 4;
+            winningFieldIds[2] = 8;
+            setWinner(field[4].getWinner(), winningFieldIds);
             return;
         }
 
         //diagonal winning check top-right to bottom-Left
         if(field[2].getWinner() == field[4].getWinner() && field[4].getWinner() == field[6].getWinner() && field[4].getWinner() != FieldState.EMPTY){
-            setWinner(field[4].getWinner());
+            winningFieldIds[0] = 2;
+            winningFieldIds[1] = 4;
+            winningFieldIds[2] = 6;
+            setWinner(field[4].getWinner(), winningFieldIds);
         }
     }
 

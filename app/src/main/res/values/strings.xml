@@ -13,5 +13,10 @@
     <string name="single_player_button_text">1 Player</string>
     <string name="two_player_button_text">2 Player</string>
     <string name="how_to_button_text">How to play</string>
+    <string name="easy_bot">Easy</string>
+    <string name="medium_bot">Medium</string>
+    <string name="hard_bot">Hard</string>
+    <string name="choose_difficulty">Choose Difficulty</string>
+    <string name="very_easy_bot">very_easy_bot</string>
 
 </resources>

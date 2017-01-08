@@ -14,18 +14,19 @@ public class AIGameController {
 
     private Ai ai;
 
-    public AIGameController(View rootView){
+    public AIGameController(View rootView, Difficulty difficulty){
         game = new Game(rootView, false);
-        ai = new Ai();
+        ai = new Ai(difficulty);
     }
 
     public void handleClick(View view){
         if(game.isStillActive()){
-            game.handleClickOnView((Button) view);
+            if(game.handleClickOnView((Button) view)){
+                doAIMove();
+            }
         }
 
 
-        doAIMove();
     }
 
     private void doAIMove(){

@@ -40,7 +40,7 @@ public class MenuFragment extends Fragment{
         getActivity().findViewById(R.id.singlePlayerButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) getActivity()).startSinglePlayerGame();
+                ((MainActivity) getActivity()).chooseDifficulty();
             }
         });
         getActivity().findViewById(R.id.helpButton).setOnClickListener(new View.OnClickListener() {

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import janluca.de.ultimatetictactoe.AI.AIGameController;
+import janluca.de.ultimatetictactoe.AI.Difficulty;
 import janluca.de.ultimatetictactoe.R;
 import janluca.de.ultimatetictactoe.game.Game;
 
@@ -15,10 +16,14 @@ public class SinglePlayerFragment extends Fragment implements PlayableFragment {
 
     final static public String FRAGMENT_MANAGER_ID = "singlePlayer";
 
+    private Difficulty difficulty;
+
     private AIGameController aiGameController;
 
-    public static SinglePlayerFragment newInstance() {
-        return new SinglePlayerFragment();
+    public static SinglePlayerFragment newInstance(Difficulty difficulty) {
+        SinglePlayerFragment fragment = new SinglePlayerFragment();
+        fragment.difficulty = difficulty;
+        return fragment;
     }
 
     public SinglePlayerFragment() {
@@ -35,7 +40,7 @@ public class SinglePlayerFragment extends Fragment implements PlayableFragment {
     @Override
     public void onStart() {
         super.onStart();
-        aiGameController = new AIGameController(getView());
+        aiGameController = new AIGameController(getView(), difficulty);
         getView().findViewById(R.id.resetButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
