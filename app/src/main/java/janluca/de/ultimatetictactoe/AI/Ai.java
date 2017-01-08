@@ -12,38 +12,19 @@ public class Ai {
 
     private Difficulty difficulty;
 
-    public Ai(Difficulty difficulty){
+    private MoveEvaluator moveEvaluator;
+
+    public Ai(Difficulty difficulty, GameState gameState){
         this.difficulty = difficulty;
+        moveEvaluator = new MoveEvaluator(difficulty);
+        moveEvaluator.setGameState(gameState);
     }
 
     public Move decideOnMove(final GameState gameState){
         Move[] allowedMoves = getAllowedMoves(gameState);
-        int[] scores = evaluateMoves(allowedMoves);
+        int[] scores = moveEvaluator.evaluateMoveScores(allowedMoves);
 
         return allowedMoves[getMoveIndexByDifficulty(scores)];
-    }
-
-    private int getMoveIndexByDifficulty(int[] scores){#
-        //either get random move of top x for different difficulties or use different levels of recursion and prediction in evaluateMoves()
-        if(difficulty == Difficulty.VERY_EASY){
-            Random r = new Random();
-            return r.nextInt(scores.length);
-        } else if(difficulty == Difficulty.EASY){
-
-        } else if(difficulty == Difficulty.MEDIUM){
-
-        } else if(difficulty == Difficulty.HARD){
-
-        }
-        return 0;
-    }
-
-    private int[] evaluateMoves(Move[] allowedMoves){
-        int [] scores = new int[allowedMoves.length];
-        for(Move move: allowedMoves){
-            int score = 0;
-        }
-        return scores;
     }
 
     private Move[] getAllowedMoves(GameState gameState){
@@ -73,6 +54,24 @@ public class Ai {
         }
         return (Move[]) allowedMoves.toArray();
     }
+
+    private int getMoveIndexByDifficulty(int[] scores){
+        //either get random move of top x for different difficulties or use different levels of recursion and prediction in getMovesScores()
+        if(difficulty == Difficulty.VERY_EASY){
+            Random r = new Random();
+            return r.nextInt(scores.length);
+        } else if(difficulty == Difficulty.EASY){
+
+        } else if(difficulty == Difficulty.MEDIUM){
+
+        } else if(difficulty == Difficulty.HARD){
+
+        }
+        return 0;
+    }
+
+
+
 
 
 

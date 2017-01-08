@@ -16,7 +16,7 @@ public class AIGameController {
 
     public AIGameController(View rootView, Difficulty difficulty){
         game = new Game(rootView, false);
-        ai = new Ai(difficulty);
+        ai = new Ai(difficulty, game.getCurrentState());
     }
 
     public void handleClick(View view){
