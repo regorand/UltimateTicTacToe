@@ -9,33 +9,33 @@ public class InnerField {
 
     private int amountMoves;
 
-    FieldState winner;
+    PlayerType winner;
 
     private boolean hasWinner;
 
-    private FieldState[] field;
+    private PlayerType[] field;
 
     public InnerField(Game game, int fieldId){
         this.game = game;
         this.fieldId = fieldId;
-        field = new FieldState[9];
+        field = new PlayerType[9];
         for (int i = 0; i < field.length; i++) {
-            field[i] = FieldState.EMPTY;
+            field[i] = PlayerType.EMPTY;
         }
-        winner = FieldState.EMPTY;
+        winner = PlayerType.EMPTY;
         hasWinner = false;
         amountMoves = 0;
     }
 
-    public FieldState[] getFieldStatus(){
+    public PlayerType[] getFieldStatus(){
         return field;
     }
 
     public boolean isValidMove(int fieldId){
-        return field[fieldId] == FieldState.EMPTY;
+        return field[fieldId] == PlayerType.EMPTY;
     }
 
-    public void doMove(int fieldId, FieldState newState){
+    public void doMove(int fieldId, PlayerType newState){
         field[fieldId] = newState;
         amountMoves++;
         checkGameOver();
@@ -44,7 +44,7 @@ public class InnerField {
     private void checkGameOver(){
         //checks vertical winning
         for(int i = 0; i < 3; i++){
-            if(field[i] == field[i+3] && field[i] == field[i+6] && field[i] != FieldState.EMPTY){
+            if(field[i] == field[i+3] && field[i] == field[i+6] && field[i] != PlayerType.EMPTY){
                 setWinner(field[i]);
                 return;
             }
@@ -52,25 +52,25 @@ public class InnerField {
 
         //checks horizontal winning
         for(int i = 0; i <= 6; i+=3){
-            if(field[i] == field[i+1] && field[i] == field[i+2] && field[i] != FieldState.EMPTY){
+            if(field[i] == field[i+1] && field[i] == field[i+2] && field[i] != PlayerType.EMPTY){
                 setWinner(field[i]);
                 return;
             }
         }
 
         //diagonal winning check top-left to bottom-right
-        if(field[0] == field[4] && field[4] == field[8] && field[4] != FieldState.EMPTY){
+        if(field[0] == field[4] && field[4] == field[8] && field[4] != PlayerType.EMPTY){
             setWinner(field[4]);
             return;
         }
 
         //diagonal winning check top-right to bottom-Left
-        if(field[2] == field[4] && field[4] == field[6] && field[4] != FieldState.EMPTY){
+        if(field[2] == field[4] && field[4] == field[6] && field[4] != PlayerType.EMPTY){
             setWinner(field[4]);
         }
     }
 
-    private void setWinner(FieldState winner){
+    private void setWinner(PlayerType winner){
         this.winner = winner;
         hasWinner = true;
         game.updateInnerFieldWon(fieldId, winner);
@@ -81,7 +81,7 @@ public class InnerField {
         return hasWinner || amountMoves >= 9;
     }
 
-    public FieldState getWinner(){
+    public PlayerType getWinner(){
         return winner;
     }
 

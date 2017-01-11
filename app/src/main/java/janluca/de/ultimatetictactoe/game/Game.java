@@ -25,7 +25,7 @@ public class Game {
     //-1 = all, 0 = topleft, 2 top right etc.
     private int activeOuterField;
 
-    private FieldState winner;
+    private PlayerType winner;
 
     private boolean gameOver;
 
@@ -44,7 +44,7 @@ public class Game {
             field[i] = new InnerField(this, i);
         }
 
-        winner = FieldState.EMPTY;
+        winner = PlayerType.EMPTY;
         gameOver = false;
         activeOuterField = -1;
         turnCounter = 0;
@@ -139,9 +139,9 @@ public class Game {
 
     private void doMove(int outerFieldId, int innerFieldId, Button view){
 
-        final FieldState activePlayer = getActivePlayer();
+        final PlayerType activePlayer = getActivePlayer();
         field[outerFieldId].doMove(innerFieldId, activePlayer);
-        if(activePlayer == FieldState.PLAYER_X){
+        if(activePlayer == PlayerType.PLAYER_X){
             view.setBackgroundResource(R.drawable.tic_tac_toe_x);
         } else {
             view.setBackgroundResource(R.drawable.tic_tac_toe_o);
@@ -157,11 +157,11 @@ public class Game {
 
 
     public GameState getCurrentState(){
-        FieldState[] outerFields = new FieldState[9];
+        PlayerType[] outerFields = new PlayerType[9];
         for (int i = 0; i < outerFields.length; i++) {
             outerFields[i] = field[i].getWinner();
         }
-        FieldState[][] innerFields = new FieldState[9][];
+        PlayerType[][] innerFields = new PlayerType[9][];
         for(int i = 0; i < innerFields.length; i++){
             innerFields[i] = field[i].getFieldStatus();
         }
@@ -174,8 +174,8 @@ public class Game {
         return new GameState(outerFields, innerFields, activeOuterField, innerFieldsWon);
     }
 
-    private FieldState getActivePlayer(){
-        return turnCounter % 2 == 0 ? FieldState.PLAYER_X : FieldState.PLAYER_O;
+    private PlayerType getActivePlayer(){
+        return turnCounter % 2 == 0 ? PlayerType.PLAYER_X : PlayerType.PLAYER_O;
     }
 
     private boolean fieldIsValidMove(int outerFieldId, int innerFieldId){
@@ -194,7 +194,7 @@ public class Game {
         return outerFieldValidMove && !innerFieldIsOver;
     }
 
-    private void setWinner(FieldState winner, int[] winningFieldIds){
+    private void setWinner(PlayerType winner, int[] winningFieldIds){
         this.winningFieldIds = winningFieldIds;
 
 
@@ -207,7 +207,7 @@ public class Game {
         int[] winningFieldIds = new int[3];
         //checks vertical winning
         for(int i = 0; i < 3; i++){
-            if(field[i].getWinner() == field[i+3].getWinner() && field[i].getWinner() == field[i+6].getWinner() && field[i].getWinner() != FieldState.EMPTY){
+            if(field[i].getWinner() == field[i+3].getWinner() && field[i].getWinner() == field[i+6].getWinner() && field[i].getWinner() != PlayerType.EMPTY){
                 winningFieldIds[0] = i;
                 winningFieldIds[1] = i + 3;
                 winningFieldIds[2] = i + 6;
@@ -218,7 +218,7 @@ public class Game {
 
         //checks horizontal winning
         for(int i = 0; i <= 6; i+=3){
-            if(field[i].getWinner() == field[i+1].getWinner() && field[i].getWinner() == field[i+2].getWinner() && field[i].getWinner() != FieldState.EMPTY){
+            if(field[i].getWinner() == field[i+1].getWinner() && field[i].getWinner() == field[i+2].getWinner() && field[i].getWinner() != PlayerType.EMPTY){
                 winningFieldIds[0] = i;
                 winningFieldIds[1] = i + 1;
                 winningFieldIds[2] = i + 2;
@@ -228,7 +228,7 @@ public class Game {
         }
 
         //diagonal winning check top-left to bottom-right
-        if(field[0].getWinner() == field[4].getWinner() && field[4].getWinner() == field[8].getWinner() && field[4].getWinner() != FieldState.EMPTY){
+        if(field[0].getWinner() == field[4].getWinner() && field[4].getWinner() == field[8].getWinner() && field[4].getWinner() != PlayerType.EMPTY){
             winningFieldIds[0] = 0;
             winningFieldIds[1] = 4;
             winningFieldIds[2] = 8;
@@ -237,7 +237,7 @@ public class Game {
         }
 
         //diagonal winning check top-right to bottom-Left
-        if(field[2].getWinner() == field[4].getWinner() && field[4].getWinner() == field[6].getWinner() && field[4].getWinner() != FieldState.EMPTY){
+        if(field[2].getWinner() == field[4].getWinner() && field[4].getWinner() == field[6].getWinner() && field[4].getWinner() != PlayerType.EMPTY){
             winningFieldIds[0] = 2;
             winningFieldIds[1] = 4;
             winningFieldIds[2] = 6;
@@ -252,13 +252,13 @@ public class Game {
         }
     }
 
-    public void updateInnerFieldWon(int id, FieldState winner){
+    public void updateInnerFieldWon(int id, PlayerType winner){
         FrameLayout layout = (FrameLayout) rootView.findViewById(OUTER_FIELD_VIEW_IDS[id]);
         layout.removeAllViews();
         ImageView view = new ImageView(rootView.getContext());
-        if(winner == FieldState.PLAYER_X){
+        if(winner == PlayerType.PLAYER_X){
             view.setImageResource(R.drawable.tic_tac_toe_x);
-        } else if(winner == FieldState.PLAYER_O){
+        } else if(winner == PlayerType.PLAYER_O){
             view.setImageResource(R.drawable.tic_tac_toe_o);
         }
         layout.addView(view);

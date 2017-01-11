@@ -2,13 +2,13 @@ package janluca.de.ultimatetictactoe.game;
 
 public class GameState {
 
-    private FieldState[] outerFieldStatus;
+    private PlayerType[] outerFieldStatus;
 
     private InnerFieldState[]  innerFieldStates;
 
     private int activeOuterField;
 
-    public GameState(FieldState[] outerFields, FieldState[][] innerFields, int activeOuterField, boolean[] innerFieldsOver){
+    public GameState(PlayerType[] outerFields, PlayerType[][] innerFields, int activeOuterField, boolean[] innerFieldsOver){
         outerFieldStatus = outerFields;
         innerFieldStates = new InnerFieldState[9];
         for (int i = 0; i < innerFieldStates.length; i++){
@@ -21,7 +21,7 @@ public class GameState {
         return innerFieldStates[id];
     }
 
-    public FieldState[] getOuterFieldStatus() {
+    public PlayerType[] getOuterFieldStatus() {
         return outerFieldStatus;
     }
 

@@ -3,20 +3,20 @@ package janluca.de.ultimatetictactoe.game;
 
 public class InnerFieldState {
 
-    private FieldState[] field;
+    private PlayerType[] field;
 
     private boolean isOver;
 
-    public InnerFieldState(FieldState[] field, boolean hasWinner){
+    public InnerFieldState(PlayerType[] field, boolean hasWinner){
         this.field = field;
         this.isOver = hasWinner;
     }
 
-    public FieldState getStateById(int id){
+    public PlayerType getStateById(int id){
         return field[id];
     }
 
-    public FieldState[] getStates(){
+    public PlayerType[] getStates(){
         return field;
     }
 

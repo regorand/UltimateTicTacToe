@@ -1,13 +1,19 @@
 package janluca.de.ultimatetictactoe.AI;
 
 import janluca.de.ultimatetictactoe.game.GameState;
+import janluca.de.ultimatetictactoe.game.InnerFieldState;
 import janluca.de.ultimatetictactoe.game.Move;
+import janluca.de.ultimatetictactoe.game.PlayerType;
 
 public class MoveEvaluator {
 
     private Difficulty difficulty;
 
     private GameState currentGameState;
+
+    private PlayerType playerExecutingMove;
+
+    private PlayerType enemy;
 
     public MoveEvaluator(Difficulty difficulty){
         this.difficulty = difficulty;
@@ -17,12 +23,36 @@ public class MoveEvaluator {
         this.currentGameState = gameState;
     }
 
+    public void setPlayerExecutingMove(PlayerType playerExecutingMove){
+        this.playerExecutingMove = playerExecutingMove;
+        if(playerExecutingMove == PlayerType.PLAYER_O){
+            enemy = PlayerType.PLAYER_X;
+        } else if(playerExecutingMove == PlayerType.PLAYER_X){
+            enemy = PlayerType.PLAYER_O;
+        }
+    }
+
+
+
     public int[] evaluateMoveScores(Move[] moves){
+
         int [] scores = new int[moves.length];
         for(Move move: moves){
             int score = 0;
             score += getInnerFieldPlacementScore(move.getInnerFieldId());
         }
+        /*
+        recursion to get mulitiple possible moves; something like this:
+
+        int recursiveScores = evaluateMoveScores(predictedMoves);
+        for(int i = 0; i < scores.length; i++){
+            scores[i] += recursiveScores[i];
+        }
+
+
+         */
+
+
         return scores;
     }
 
@@ -38,7 +68,37 @@ public class MoveEvaluator {
 
      */
 
+    private int winsGame(){
+        //called when innerFieldWin is true
 
+
+        return 0;
+    }
+
+
+
+
+
+
+    public int winsInnerField(Move move){
+        int score = 0;
+        int innerFieldId = move.getInnerFieldId();
+        InnerFieldState innerFieldState = currentGameState.getInnerFieldStateById(move.getOuterFieldId());
+
+        if(innerFieldState.getStateById((innerFieldId + 3) % 9) == playerExecutingMove &&
+                innerFieldState.getStateById((innerFieldId + 6) % 9) == playerExecutingMove){
+            //vertical winning
+            score += 100;
+        }
+        int[] horizontalIds = new int[2];
+        for(int i = 0; i <= 6; i+=3){
+            //find a way to check for horizontal winning
+        }
+
+
+
+        return score;
+    }
 
     private int getInnerFieldPlacementScore(int innerFieldId){
         switch (innerFieldId){

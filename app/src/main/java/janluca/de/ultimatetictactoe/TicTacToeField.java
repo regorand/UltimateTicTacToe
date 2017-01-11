@@ -6,11 +6,11 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.widget.Button;
 
-import janluca.de.ultimatetictactoe.game.FieldState;
+import janluca.de.ultimatetictactoe.game.PlayerType;
 
 public class TicTacToeField extends Button {
 
-    private FieldState fieldState;
+    private PlayerType playerType;
 
     public TicTacToeField(Context context) {
         super(context);

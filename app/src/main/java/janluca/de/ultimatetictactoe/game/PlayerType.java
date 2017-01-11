@@ -1,14 +1,14 @@
 package janluca.de.ultimatetictactoe.game;
 
 
-public enum FieldState {
+public enum PlayerType {
     EMPTY(""),
     PLAYER_X("Player X"),
     PLAYER_O("Player O");
 
     private String value;
 
-    FieldState(String value){
+    PlayerType(String value){
         this.value = value;
     }
 
