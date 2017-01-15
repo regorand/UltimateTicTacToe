@@ -12,6 +12,15 @@ public enum PlayerType {
         this.value = value;
     }
 
+    public static  PlayerType getEnemy(PlayerType playerType){
+        if(playerType == PlayerType.PLAYER_O){
+            return PLAYER_X;
+        } else if(playerType == PlayerType.PLAYER_X){
+            return PLAYER_O;
+        }
+        return EMPTY;
+    }
+
     @Override
     public String toString() {
         return value;

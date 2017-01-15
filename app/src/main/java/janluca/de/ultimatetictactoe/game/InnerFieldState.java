@@ -16,6 +16,10 @@ public class InnerFieldState {
         return field[id];
     }
 
+    public void setStateById(PlayerType playerType, int id){
+        field[id] = playerType;
+    }
+
     public PlayerType[] getStates(){
         return field;
     }
