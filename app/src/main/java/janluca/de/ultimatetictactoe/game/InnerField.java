@@ -31,6 +31,10 @@ public class InnerField {
         return field;
     }
 
+    public PlayerType getFieldStatusById(int id){
+        return field[id];
+    }
+
     public boolean isValidMove(int fieldId){
         return field[fieldId] == PlayerType.EMPTY;
     }

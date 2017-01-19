@@ -1,12 +1,9 @@
 package janluca.de.ultimatetictactoe.AI;
 
-import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.locks.AbstractOwnableSynchronizer;
 
+import janluca.de.ultimatetictactoe.game.Game;
 import janluca.de.ultimatetictactoe.game.PlayerType;
-import janluca.de.ultimatetictactoe.game.GameState;
-import janluca.de.ultimatetictactoe.game.InnerFieldState;
 import janluca.de.ultimatetictactoe.game.Move;
 
 public class Ai {
@@ -17,14 +14,15 @@ public class Ai {
 
 
 
-    public Ai(Difficulty difficulty, GameState gameState){
+    public Ai(Difficulty difficulty, Game game){
         this.difficulty = difficulty;
 
     }
 
-    public Move decideOnMove(final GameState gameState){
-        Move[] allowedMoves = gameState.getAllowedMoves();
-        MoveEvaluator moveEvaluator = new MoveEvaluator(difficulty, AI_PLAYER_TYPE, gameState);
+    // maybe move this into different class
+    public Move decideOnMove(final Game game){
+        Move[] allowedMoves = game.getAllowedMoves();
+        MoveEvaluator moveEvaluator = new MoveEvaluator(difficulty, AI_PLAYER_TYPE, game);
 
         int[] scores = moveEvaluator.evaluateMoveScores(allowedMoves);
 
@@ -32,7 +30,6 @@ public class Ai {
     }
 
 
-    // maybe move this into GameState class
 
 
     private int getMoveIndexByDifficulty(int[] scores){

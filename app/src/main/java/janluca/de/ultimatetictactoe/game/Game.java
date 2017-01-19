@@ -7,6 +7,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import janluca.de.ultimatetictactoe.R;
 
 
@@ -35,6 +37,10 @@ public class Game {
 
     private int[] winningFieldIds;
 
+    private boolean gameUsedForPrediction;
+
+    //Constructors and methods for copying
+    //-----
     public Game(View rootView, boolean isTwoPlayerGame){
         this.isTwoPlayerGame = isTwoPlayerGame;
         this.rootView = rootView;
@@ -53,7 +59,39 @@ public class Game {
         updateStatusField();
         clearField();
         changeEnabledFieldsVisualisation();
+        gameUsedForPrediction = false;
     }
+
+    public Game createCopyForPrediction(){
+        Game newGame = new Game(this.rootView, this.isTwoPlayerGame);
+        newGame.setRequiredCopyValues(
+                outerFieldViews, activeOuterField, winner, gameOver, turnCounter, field, winningFieldIds
+        );
+        return newGame;
+    }
+
+
+    private void setRequiredCopyValues(FrameLayout[] outerFieldViews,
+                                       int activeOuterField,
+                                       PlayerType winner,
+                                       boolean gameOver,
+                                       int turnCounter,
+                                       InnerField[] field,
+                                       int[] winningFieldIds){
+        this.outerFieldViews = outerFieldViews;
+        this.activeOuterField = activeOuterField;
+        this.winner = winner;
+        this.gameOver = gameOver;
+        this.turnCounter = turnCounter;
+        this.field = field;
+        this.winningFieldIds = winningFieldIds;
+        this.gameUsedForPrediction = true;
+    }
+
+
+
+    //methods for updating the GUI
+    //-----
 
     private void clearField(){
 
@@ -108,6 +146,35 @@ public class Game {
         }
     }
 
+    private void saveOuterFieldViews(){
+        outerFieldViews = new FrameLayout[OUTER_FIELD_VIEW_IDS.length];
+        for(int i = 0; i < OUTER_FIELD_VIEW_IDS.length; i++){
+            outerFieldViews[i] = (FrameLayout) rootView.findViewById(OUTER_FIELD_VIEW_IDS[i]);
+        }
+    }
+
+
+
+    public void updateInnerFieldWon(int id, PlayerType winner){
+        if(!gameUsedForPrediction){
+            FrameLayout layout = (FrameLayout) rootView.findViewById(OUTER_FIELD_VIEW_IDS[id]);
+            layout.removeAllViews();
+            ImageView view = new ImageView(rootView.getContext());
+            if(winner == PlayerType.PLAYER_X){
+                view.setImageResource(R.drawable.tic_tac_toe_x);
+            } else if(winner == PlayerType.PLAYER_O){
+                view.setImageResource(R.drawable.tic_tac_toe_o);
+            }
+            layout.addView(view);
+        }
+    }
+
+
+
+
+    //methods handling user (or AI) interaction
+    //-----
+
     public boolean handleClickOnView(Button view){
         //felt dirty writing this - sorry
         int outerTag = Integer.valueOf((String) ((View) view.getParent().getParent().getParent()).getTag()),
@@ -150,33 +217,58 @@ public class Game {
         activeOuterField = field[innerFieldId].isOver() ? -1 : innerFieldId;
         checkGameOver();
 
-        updateStatusField();
-        changeEnabledFieldsVisualisation();
+        if(!gameUsedForPrediction){
+            updateStatusField();
+            changeEnabledFieldsVisualisation();
+        }
 
     }
 
+    //getter methods
+    //-----
 
-    public GameState getCurrentState(){
-        PlayerType[] outerFields = new PlayerType[9];
-        for (int i = 0; i < outerFields.length; i++) {
-            outerFields[i] = field[i].getWinner();
-        }
-        PlayerType[][] innerFields = new PlayerType[9][];
-        for(int i = 0; i < innerFields.length; i++){
-            innerFields[i] = field[i].getFieldStatus();
-        }
 
-        boolean[] innerFieldsWon = new boolean[9];
-        for (int i = 0; i < innerFields.length; i++) {
-            innerFieldsWon[i] = field[i].isOver();
-        }
+    public PlayerType getOuterFieldById(int id) {
 
-        return new GameState(outerFields, innerFields, activeOuterField, innerFieldsWon);
+        return field[id].getWinner();
+    }
+
+    public InnerField getInnerFieldStateById(int id){
+        return field[id];
     }
 
     private PlayerType getActivePlayer(){
         return turnCounter % 2 == 0 ? PlayerType.PLAYER_X : PlayerType.PLAYER_O;
     }
+
+    public Move[] getAllowedMoves(){
+        ArrayList<Move> allowedMoves = new ArrayList<>();
+        if(activeOuterField != -1){
+            PlayerType[] innerPlayerTypes = field[activeOuterField].getFieldStatus();
+            for(int i = 0; i < innerPlayerTypes.length; i++){
+                if(innerPlayerTypes[i] == PlayerType.EMPTY){
+                    allowedMoves.add(new Move(activeOuterField, i));
+                }
+            }
+        } else {
+            for (int i = 0; i < field.length ; i++) {
+                if(!field[i].isOver()){
+                    PlayerType[] innerPlayerTypes = field[i].getFieldStatus();
+                    for(int j = 0; j < innerPlayerTypes.length; j++){
+                        if(innerPlayerTypes[j] == PlayerType.EMPTY){
+                            allowedMoves.add(new Move(i, j));
+                        }
+                    }
+                }
+            }
+        }
+        return (Move[]) allowedMoves.toArray();
+    }
+
+
+
+    //game engine methods
+    //-----
 
     private boolean fieldIsValidMove(int outerFieldId, int innerFieldId){
         final boolean outerFieldValid = outerFieldIsValid(outerFieldId);
@@ -200,8 +292,12 @@ public class Game {
 
         this.winner = winner;
         gameOver = true;
-        System.out.println("entire game won for " + winner.toString());
+        if(!gameUsedForPrediction){
+            System.out.println("entire game won for " + winner.toString());
+        }
     }
+
+
 
     private void checkGameOver(){
         int[] winningFieldIds = new int[3];
@@ -245,22 +341,5 @@ public class Game {
         }
     }
 
-    private void saveOuterFieldViews(){
-        outerFieldViews = new FrameLayout[OUTER_FIELD_VIEW_IDS.length];
-        for(int i = 0; i < OUTER_FIELD_VIEW_IDS.length; i++){
-            outerFieldViews[i] = (FrameLayout) rootView.findViewById(OUTER_FIELD_VIEW_IDS[i]);
-        }
-    }
 
-    public void updateInnerFieldWon(int id, PlayerType winner){
-        FrameLayout layout = (FrameLayout) rootView.findViewById(OUTER_FIELD_VIEW_IDS[id]);
-        layout.removeAllViews();
-        ImageView view = new ImageView(rootView.getContext());
-        if(winner == PlayerType.PLAYER_X){
-            view.setImageResource(R.drawable.tic_tac_toe_x);
-        } else if(winner == PlayerType.PLAYER_O){
-            view.setImageResource(R.drawable.tic_tac_toe_o);
-        }
-        layout.addView(view);
-    }
 }
