@@ -17,7 +17,7 @@ public class AIGameController implements GameController {
 
     public AIGameController(View rootView, Difficulty difficulty) {
         game = new Game(rootView);
-        ai = new Ai(difficulty, game);
+        ai = new Ai(difficulty, this);
     }
 
     public void handleClick(View view) {

@@ -10,15 +10,13 @@ public class ShowdownGameController implements GameController {
 
     private Game game;
 
-    private Difficulty difficultyO, difficultyX;
+    private Ai ai_X, ai_O;
 
     public ShowdownGameController(View rootView, Difficulty difficultyX, Difficulty difficultyO) {
         game = new Game(rootView);
-        this.difficultyO = difficultyO;
-        this.difficultyX = difficultyX;
+        ai_X = new Ai(difficultyX, this);
+        ai_O = new Ai(difficultyO, this);
     }
-
-
 
     public void handleClick(View view) {
         startShowdown();
