@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import janluca.de.ultimatetictactoe.AI.AIGameController;
 import janluca.de.ultimatetictactoe.AI.Difficulty;
+import janluca.de.ultimatetictactoe.AI.ShowdownGameController;
 import janluca.de.ultimatetictactoe.R;
 
 public class BotShowdownFragment extends Fragment implements PlayableFragment {
@@ -17,7 +18,7 @@ public class BotShowdownFragment extends Fragment implements PlayableFragment {
 
     private Difficulty difficultyO, difficultyX;
 
-    private AIGameController aiGameController;
+    private ShowdownGameController showdownGameController;
 
     public static BotShowdownFragment newInstance(Difficulty difficultyBotO, Difficulty difficultyBotX) {
         BotShowdownFragment fragment = new BotShowdownFragment();
@@ -40,7 +41,7 @@ public class BotShowdownFragment extends Fragment implements PlayableFragment {
     @Override
     public void onStart() {
         super.onStart();
-        aiGameController = new AIGameController(getView(), difficultyO, difficultyX);
+        ShowdownGameController showdownGameController = new ShowdownGameController(getView(), difficultyO, difficultyX);
         getView().findViewById(R.id.resetButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,10 +52,10 @@ public class BotShowdownFragment extends Fragment implements PlayableFragment {
 
     @Override
     public void handleClick(View view) {
-        aiGameController.handleClick(view);
+        showdownGameController.handleClick(view);
     }
 
     public void resetGame(){
-        aiGameController.resetGame(getView());
+        showdownGameController.resetGame(getView());
     }
 }

@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startBotShowdown(){
         //second Difficulty goes first and is X
-        BotShowdownFragment fragment = BotShowdownFragment.newInstance(Difficulty.HARD, Difficulty.EASY);
+        BotShowdownFragment fragment = BotShowdownFragment.newInstance(Difficulty.HARD, Difficulty.HARD);
 
         activeGame = fragment;
 

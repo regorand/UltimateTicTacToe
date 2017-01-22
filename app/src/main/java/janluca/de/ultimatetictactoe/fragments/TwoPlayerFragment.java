@@ -24,7 +24,7 @@ public class TwoPlayerFragment extends Fragment implements PlayableFragment {
     }
 
     public void registerGame(){
-        game = new Game(getView(), true);
+        game = new Game(getView());
     }
 
     public TwoPlayerFragment(){
@@ -56,7 +56,7 @@ public class TwoPlayerFragment extends Fragment implements PlayableFragment {
     }
 
     public void resetGame(){
-        game = new Game(getView(), true);
+        game = new Game(getView());
     }
 
 }

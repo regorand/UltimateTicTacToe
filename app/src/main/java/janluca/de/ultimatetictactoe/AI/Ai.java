@@ -3,6 +3,7 @@ package janluca.de.ultimatetictactoe.AI;
 import java.util.Random;
 
 import janluca.de.ultimatetictactoe.game.Game;
+import janluca.de.ultimatetictactoe.game.GameController;
 import janluca.de.ultimatetictactoe.game.PlayerType;
 import janluca.de.ultimatetictactoe.game.Move;
 
@@ -12,11 +13,11 @@ public class Ai {
 
     private Difficulty difficulty;
 
+    final GameController gameController;
 
-
-    public Ai(Difficulty difficulty, Game game){
+    public Ai(Difficulty difficulty, GameController gameController){
         this.difficulty = difficulty;
-
+        this.gameController = gameController;
     }
 
     // maybe move this into different class

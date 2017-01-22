@@ -17,8 +17,6 @@ public class Game {
 
     private FrameLayout[] outerFieldViews;
 
-    private final boolean isTwoPlayerGame;
-
     final View rootView;
 
     private final int[] OUTER_FIELD_VIEW_IDS = {R.id.outerFieldZero, R.id.outerFieldOne, R.id.outerFieldTwo,
@@ -46,12 +44,11 @@ public class Game {
 
 
     //TODO mabye Highlight last move made
-    public Game(View rootView, boolean isTwoPlayerGame){
-        this(rootView, isTwoPlayerGame, false);
+    public Game(View rootView){
+        this(rootView, false);
     }
 
-    private Game(View rootView, boolean isTwoPlayerGame, boolean gameUsedForPrediction){
-        this.isTwoPlayerGame = isTwoPlayerGame;
+    private Game(View rootView, boolean gameUsedForPrediction){
         this.rootView = rootView;
 
         field = new InnerField[9];
@@ -75,7 +72,7 @@ public class Game {
     }
 
     public Game createCopyForPrediction(){
-        Game newGame = new Game(this.rootView, this.isTwoPlayerGame, true);
+        Game newGame = new Game(this.rootView);
         newGame.setRequiredCopyValues(
                 activeOuterField, winner, gameOver, turnCounter, field
         );
