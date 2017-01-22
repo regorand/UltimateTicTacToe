@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import janluca.de.ultimatetictactoe.AI.Difficulty;
+import janluca.de.ultimatetictactoe.fragments.BotShowdownFragment;
 import janluca.de.ultimatetictactoe.fragments.ChooseDifficultyFragment;
 import janluca.de.ultimatetictactoe.fragments.PlayableFragment;
 import janluca.de.ultimatetictactoe.fragments.SinglePlayerFragment;
@@ -36,6 +37,19 @@ public class MainActivity extends AppCompatActivity {
         if(activeGame != null){
             activeGame.handleClick(view);
         }
+    }
+
+    public void startBotShowdown(){
+        //second Difficulty goes first and is X
+        BotShowdownFragment fragment = BotShowdownFragment.newInstance(Difficulty.HARD, Difficulty.EASY);
+
+        activeGame = fragment;
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.root_layout, fragment, BotShowdownFragment.FRAGMENT_MANAGER_ID)
+                .addToBackStack(null)
+                .commit();
     }
 
     public void startSinglePlayerGame(Difficulty difficulty){

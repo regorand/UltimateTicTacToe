@@ -1,5 +1,12 @@
 package janluca.de.ultimatetictactoe.AI;
 
+import android.util.IntProperty;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import janluca.de.ultimatetictactoe.game.Game;
 import janluca.de.ultimatetictactoe.game.InnerField;
 import janluca.de.ultimatetictactoe.game.Move;
@@ -11,21 +18,24 @@ public class MoveEvaluator {
 
     final private Game currentGame;
 
-    final private Game gameDouble;
+
 
     private PlayerType playerExecutingMove;
 
     private PlayerType enemy;
 
+
+    //TODO maybe let certain criteria only be used by certain difficulties
+    //TODO HArd bot takes incredibly long to decide on move
+    //TODO maybe start move evaluation in different Thread, that way you could update while waiting for AI to decide (or for showdown)
     public MoveEvaluator(Difficulty difficulty, PlayerType playerExecutingMove, final Game game){
         this.difficulty = difficulty;
         currentGame = game;
-        gameDouble = game.createCopyForPrediction();
         this.playerExecutingMove = playerExecutingMove;
-        enemy = PlayerType.getEnemy(playerExecutingMove);
+        enemy = playerExecutingMove.getEnemy();
     }
 
-    public int[] evaluateMoveScores(Move[] moves){
+    public Move evaluateMoveScores(Move[] moves){
         int recursionDepth;
         switch (difficulty){
             case EASY:
@@ -40,48 +50,37 @@ public class MoveEvaluator {
             default:
                 recursionDepth = 1;
         }
-        return evaluateMoveScores(moves, recursionDepth, false);
-
+        return evaluateMoveScores(moves, recursionDepth);
     }
 
-    int[] evaluateMoveScores(Move[] moves, int remainingRecursion, boolean enemyMoveCalculation){
-
-        int [] scores = new int[moves.length];
-        for(int i = 0; i < moves.length; i++) {
+    private Move evaluateMoveScores(Move[] moves, int remainingRecursion){
+        int highestScore = Integer.MIN_VALUE;
+        Move bestMove = moves[0];
+        //int [] scores = new int[moves.length];
+        for (Move move : moves) {
             int score = 0;
-            score += getInnerFieldPlacementScore(moves[i]);
-            score += winsInnerField(moves[i]);
-            score += getTwoInRowScore(moves[i]);
-            score += destroyTwoInRowForEnemy(moves[i]);
+            score += getInnerFieldPlacementScore(move);
+            score += winsInnerField(move);
+            score += getTwoInRowScore(move);
+            score += destroyTwoInRowForEnemy(move);
 
+            if (remainingRecursion > 0) {
+                final Game gameCopy = currentGame.createCopyForPrediction();
+                gameCopy.doMove(move);
+                if(gameCopy.isStillActive()){
+                    final MoveEvaluator moveEvaluator = new MoveEvaluator(this.difficulty, playerExecutingMove.getEnemy(), gameCopy);
+                    score -= 0.8 * moveEvaluator.evaluateMoveScores(gameCopy.getAllowedMoves(), remainingRecursion - 1).getScore();
 
-            //score += recursiveScore by means of new MoveEvaluator
+                }
+            }
 
-
-            scores[i] = score;
-
+            move.setScore(score);
+            if(score > highestScore){
+                highestScore = score;
+                bestMove = move;
+            }
         }
-
-
-
-        if(!enemyMoveCalculation){
-
-        }
-
-
-        /*
-        recursion to get mulitiple possible moves; something like this:
-
-        int recursiveScores = evaluateMoveScores(predictedMoves);
-        for(int i = 0; i < scores.length; i++){
-            scores[i] += recursiveScores[i];
-        }
-
-
-         */
-
-
-        return scores;
+        return bestMove;
     }
 
     /*
@@ -93,32 +92,33 @@ public class MoveEvaluator {
      */
     //outerField: win
     private int winsGame(Move move){
+        final int SCORE_TO_RECEIVE = 1000000;
         int score = 0;
         int outerFieldId = move.getOuterFieldId();
 
         if(currentGame.getOuterFieldById((outerFieldId + 3) % 9) == playerExecutingMove &&
                 currentGame.getOuterFieldById((outerFieldId + 6) % 9) == playerExecutingMove){
             //vertical winning
-            score += 100000;
+            score += SCORE_TO_RECEIVE;
         }
 
         int row = outerFieldId / 3;
         if(currentGame.getOuterFieldById((outerFieldId + 1) % 3 + (3 * row) ) == playerExecutingMove &&
                 currentGame.getOuterFieldById((outerFieldId + 2) % 3 + (3 * row) ) == playerExecutingMove){
-            score += 100000;
+            score += SCORE_TO_RECEIVE;
         }
 
         if(outerFieldId == 0 || outerFieldId == 4 || outerFieldId == 8){
             if(currentGame.getOuterFieldById((outerFieldId + 4) % 12) == playerExecutingMove &&
                     currentGame.getOuterFieldById((outerFieldId + 8) % 12) == playerExecutingMove){
-                score += 100000;
+                score += SCORE_TO_RECEIVE;
             }
         }
 
         if(outerFieldId == 2 || outerFieldId == 4 || outerFieldId == 6){
             if(currentGame.getOuterFieldById((outerFieldId + 2) < 8 ? outerFieldId + 2 : outerFieldId - 4) == playerExecutingMove &&
                     currentGame.getOuterFieldById((outerFieldId + 4) < 8 ? outerFieldId + 4 : outerFieldId - 2) == playerExecutingMove){
-                score += 100000;
+                score += SCORE_TO_RECEIVE;
             }
         }
 
@@ -128,32 +128,40 @@ public class MoveEvaluator {
 
     //outerField: get 2 in row
     private int getTwoOuterFieldInRow(Move move){
+        final int SCORE_TO_RECEIVE = 100000;
+
         int score = 0;
         int outerFieldId = move.getOuterFieldId();
 
-        if(currentGame.getOuterFieldById((outerFieldId + 3) % 9) == playerExecutingMove ||
-                currentGame.getOuterFieldById((outerFieldId + 6) % 9) == playerExecutingMove){
+        if((currentGame.getOuterFieldById((outerFieldId + 3) % 9) == playerExecutingMove && currentGame.getOuterFieldById((outerFieldId + 6) % 9) == PlayerType.EMPTY) ||
+                (currentGame.getOuterFieldById((outerFieldId + 6) % 9) == playerExecutingMove && currentGame.getOuterFieldById((outerFieldId + 3) % 9) == PlayerType.EMPTY)){
             //vertical winning
-            score += 1000;
+            score += SCORE_TO_RECEIVE;
         }
 
         int row = outerFieldId / 3;
-        if(currentGame.getOuterFieldById((outerFieldId + 1) % 3 + (3 * row) ) == playerExecutingMove ||
-                currentGame.getOuterFieldById((outerFieldId + 2) % 3 + (3 * row) ) == playerExecutingMove){
-            score += 1000;
+        if((currentGame.getOuterFieldById((outerFieldId + 1) % 3 + (3 * row) ) == playerExecutingMove &&
+                currentGame.getOuterFieldById((outerFieldId + 2) % 3 + (3 * row) ) == PlayerType.EMPTY) ||
+                (currentGame.getOuterFieldById((outerFieldId + 2) % 3 + (3 * row) ) == playerExecutingMove &&
+                        currentGame.getOuterFieldById((outerFieldId + 1) % 3 + (3 * row) ) == PlayerType.EMPTY)){
+            score += SCORE_TO_RECEIVE;
         }
 
         if(outerFieldId == 0 || outerFieldId == 4 || outerFieldId == 8){
-            if(currentGame.getOuterFieldById((outerFieldId + 4) % 12) == playerExecutingMove ||
-                    currentGame.getOuterFieldById((outerFieldId + 8) % 12) == playerExecutingMove){
-                score += 1000;
+            if((currentGame.getOuterFieldById((outerFieldId + 4) % 12) == playerExecutingMove &&
+                    currentGame.getOuterFieldById((outerFieldId + 8) % 12) == PlayerType.EMPTY) ||
+                    (currentGame.getOuterFieldById((outerFieldId + 8) % 12) == playerExecutingMove &&
+                            currentGame.getOuterFieldById((outerFieldId + 4) % 12) == PlayerType.EMPTY)){
+                score += SCORE_TO_RECEIVE;
             }
         }
 
         if(outerFieldId == 2 || outerFieldId == 4 || outerFieldId == 6){
-            if(currentGame.getOuterFieldById((outerFieldId + 2) < 8 ? outerFieldId + 2 : outerFieldId - 4) == playerExecutingMove ||
-                    currentGame.getOuterFieldById((outerFieldId + 4) < 8 ? outerFieldId + 4 : outerFieldId - 2) == playerExecutingMove){
-                score += 1000;
+            if((currentGame.getOuterFieldById((outerFieldId + 2) < 8 ? outerFieldId + 2 : outerFieldId - 4) == playerExecutingMove &&
+                    currentGame.getOuterFieldById((outerFieldId + 4) < 8 ? outerFieldId + 4 : outerFieldId - 2) == PlayerType.EMPTY) ||
+                    (currentGame.getOuterFieldById((outerFieldId + 4) < 8 ? outerFieldId + 4 : outerFieldId - 2) == playerExecutingMove &&
+                            currentGame.getOuterFieldById((outerFieldId + 2) < 8 ? outerFieldId + 2 : outerFieldId - 4) == PlayerType.EMPTY)){
+                score += SCORE_TO_RECEIVE;
             }
         }
 
@@ -163,32 +171,34 @@ public class MoveEvaluator {
 
     //outerField: deny win possibility
     private int outerFieldDestroyTwoInRow(Move move){
+        final int SCORE_TO_RECEIVE = 100000;
+
         int score = 0;
         int outerFieldId = move.getOuterFieldId();
 
         if(currentGame.getOuterFieldById((outerFieldId + 3) % 9) == enemy &&
                 currentGame.getOuterFieldById((outerFieldId + 6) % 9) == enemy){
             //vertical winning
-            score += 1000;
+            score += SCORE_TO_RECEIVE;
         }
 
         int row = outerFieldId / 3;
         if(currentGame.getOuterFieldById((outerFieldId + 1) % 3 + (3 * row) ) == enemy &&
                 currentGame.getOuterFieldById((outerFieldId + 2) % 3 + (3 * row) ) == enemy){
-            score += 1000;
+            score += SCORE_TO_RECEIVE;
         }
 
         if(outerFieldId == 0 || outerFieldId == 4 || outerFieldId == 8){
             if(currentGame.getOuterFieldById((outerFieldId + 4) % 12) == enemy &&
                     currentGame.getOuterFieldById((outerFieldId + 8) % 12) == enemy){
-                score += 1000;
+                score += SCORE_TO_RECEIVE;
             }
         }
 
         if(outerFieldId == 2 || outerFieldId == 4 || outerFieldId == 6){
             if(currentGame.getOuterFieldById((outerFieldId + 2) < 8 ? outerFieldId + 2 : outerFieldId - 4) == enemy &&
                     currentGame.getOuterFieldById((outerFieldId + 4) < 8 ? outerFieldId + 4 : outerFieldId - 2) == enemy){
-                score += 1000;
+                score += SCORE_TO_RECEIVE;
             }
         }
 
@@ -201,18 +211,20 @@ public class MoveEvaluator {
         switch (move.getOuterFieldId()){
             case 4:
                 //middle field
-                return 10;
+                return 10000;
             case 0:case 2:case 6:case 8:
                 //corner fields
-                return 5;
+                return 5000;
             default:
                 //side fields
-                return 1;
+                return 1000;
         }
     }
 
     //-innerField: win
     private int winsInnerField(Move move){
+        final int SCORE_TO_RECEIVE = 1000;
+
         int score = 0;
         int innerFieldId = move.getInnerFieldId();
         boolean winsInnerField = false;
@@ -221,7 +233,7 @@ public class MoveEvaluator {
         if(innerField.getFieldStatusById((innerFieldId + 3) % 9) == playerExecutingMove &&
                 innerField.getFieldStatusById((innerFieldId + 6) % 9) == playerExecutingMove){
             //vertical winning
-            score += 100;
+            score += SCORE_TO_RECEIVE;
             winsInnerField = true;
         }
 
@@ -229,14 +241,14 @@ public class MoveEvaluator {
         if(innerField.getFieldStatusById((innerFieldId + 1) % 3 + (3 * row) ) == playerExecutingMove &&
                 innerField.getFieldStatusById((innerFieldId + 2) % 3 + (3 * row) ) == playerExecutingMove){
             //horizontal winning
-            score += 100;
+            score += SCORE_TO_RECEIVE;
             winsInnerField = true;
         }
 
         if(innerFieldId == 0 || innerFieldId == 4 || innerFieldId == 8){
             if(innerField.getFieldStatusById((innerFieldId + 4) % 12) == playerExecutingMove &&
                     innerField.getFieldStatusById((innerFieldId + 8) % 12) == playerExecutingMove){
-                score += 100;
+                score += SCORE_TO_RECEIVE;
                 winsInnerField = true;
             }
         }
@@ -244,7 +256,7 @@ public class MoveEvaluator {
         if(innerFieldId == 2 || innerFieldId == 4 || innerFieldId == 6){
             if(innerField.getFieldStatusById((innerFieldId + 2) < 8 ? innerFieldId + 2 : innerFieldId - 4) == playerExecutingMove &&
                     innerField.getFieldStatusById((innerFieldId + 4) < 8 ? innerFieldId + 4 : innerFieldId - 2) == playerExecutingMove){
-                score += 100;
+                score += SCORE_TO_RECEIVE;
                 winsInnerField = true;
             }
         }
@@ -261,34 +273,40 @@ public class MoveEvaluator {
 
     //-innerField: get 2 in row
     private int getTwoInRowScore(Move move){
+        final int SCORE_TO_RECEIVE = 100;
         int score = 0;
         int innerFieldId = move.getInnerFieldId();
         InnerField innerField = currentGame.getInnerFieldStateById(move.getOuterFieldId());
 
-        if(innerField.getFieldStatusById((innerFieldId + 3) % 9) == playerExecutingMove ||
-                innerField.getFieldStatusById((innerFieldId + 6) % 9) == playerExecutingMove){
+        if((innerField.getFieldStatusById((innerFieldId + 3) % 9) == playerExecutingMove && innerField.getFieldStatusById((innerFieldId + 6) % 9) == PlayerType.EMPTY)
+                ||
+                (innerField.getFieldStatusById((innerFieldId + 6) % 9) == playerExecutingMove && innerField.getFieldStatusById((innerFieldId + 3) % 9) == PlayerType.EMPTY)){
             //vertical winning
-            score += 30;
+            score += SCORE_TO_RECEIVE;
         }
 
         int row = innerFieldId / 3;
-        if(innerField.getFieldStatusById((innerFieldId + 1) % 3 + (3 * row) ) == playerExecutingMove ||
-                innerField.getFieldStatusById((innerFieldId + 2) % 3 + (3 * row) ) == playerExecutingMove){
+        if((innerField.getFieldStatusById((innerFieldId + 1) % 3 + (3 * row) ) == playerExecutingMove &&
+                innerField.getFieldStatusById((innerFieldId + 2) % 3 + (3 * row) ) == PlayerType.EMPTY) ||
+                (innerField.getFieldStatusById((innerFieldId + 2) % 3 + (3 * row) ) == playerExecutingMove &&
+                        innerField.getFieldStatusById((innerFieldId + 1) % 3 + (3 * row) ) == PlayerType.EMPTY)){
             //horizontal winning
-            score += 30;
+            score += SCORE_TO_RECEIVE;
         }
 
         if(innerFieldId == 0 || innerFieldId == 4 || innerFieldId == 8){
-            if(innerField.getFieldStatusById((innerFieldId + 4) % 12) == playerExecutingMove ||
-                    innerField.getFieldStatusById((innerFieldId + 8) % 12) == playerExecutingMove){
-                score += 30;
+            if((innerField.getFieldStatusById((innerFieldId + 4) % 12) == playerExecutingMove && innerField.getFieldStatusById((innerFieldId + 8) % 12) == PlayerType.EMPTY) ||
+                    (innerField.getFieldStatusById((innerFieldId + 8) % 12) == playerExecutingMove && innerField.getFieldStatusById((innerFieldId + 4) % 12) == PlayerType.EMPTY)){
+                score += SCORE_TO_RECEIVE;
             }
         }
 
         if(innerFieldId == 2 || innerFieldId == 4 || innerFieldId == 6){
-            if(innerField.getFieldStatusById((innerFieldId + 2) < 8 ? innerFieldId + 2 : innerFieldId - 4) == playerExecutingMove ||
-                    innerField.getFieldStatusById((innerFieldId + 4) < 8 ? innerFieldId + 4 : innerFieldId - 2) == playerExecutingMove){
-                score += 30;
+            if((innerField.getFieldStatusById((innerFieldId + 2) < 8 ? innerFieldId + 2 : innerFieldId - 4) == playerExecutingMove &&
+                    innerField.getFieldStatusById((innerFieldId + 4) < 8 ? innerFieldId + 4 : innerFieldId - 2) == PlayerType.EMPTY) ||
+                    (innerField.getFieldStatusById((innerFieldId + 4) < 8 ? innerFieldId + 4 : innerFieldId - 2) == playerExecutingMove &&
+                            innerField.getFieldStatusById((innerFieldId + 2) < 8 ? innerFieldId + 2 : innerFieldId - 4) == PlayerType.EMPTY)){
+                score += SCORE_TO_RECEIVE;
             }
         }
 
@@ -297,6 +315,9 @@ public class MoveEvaluator {
 
     //-innerField: deny win possibility
     private int destroyTwoInRowForEnemy(Move move){
+        final int SCORE_TO_RECEIVE = 100;
+        //TODO maybe consider if 2 TwoInRow possible for enemy, maybe make him focus more on himself than destroing the "Zwickmühle"
+
         int score = 0;
         int innerFieldId = move.getInnerFieldId();
         boolean winsInnerField = false;
@@ -305,7 +326,7 @@ public class MoveEvaluator {
         if(innerField.getFieldStatusById((innerFieldId + 3) % 9) == enemy &&
                 innerField.getFieldStatusById((innerFieldId + 6) % 9) == enemy){
             //vertical winning
-            score += 30;
+            score += SCORE_TO_RECEIVE;
             winsInnerField = true;
         }
 
@@ -313,14 +334,14 @@ public class MoveEvaluator {
         if(innerField.getFieldStatusById((innerFieldId + 1) % 3 + (3 * row) ) == enemy &&
                 innerField.getFieldStatusById((innerFieldId + 2) % 3 + (3 * row) ) == enemy){
             //horizontal winning
-            score += 30;
+            score += SCORE_TO_RECEIVE;
             winsInnerField = true;
         }
 
         if(innerFieldId == 0 || innerFieldId == 4 || innerFieldId == 8){
             if(innerField.getFieldStatusById((innerFieldId + 4) % 12) == enemy &&
                     innerField.getFieldStatusById((innerFieldId + 8) % 12) == enemy){
-                score += 30;
+                score += SCORE_TO_RECEIVE;
                 winsInnerField = true;
             }
         }
@@ -328,7 +349,7 @@ public class MoveEvaluator {
         if(innerFieldId == 2 || innerFieldId == 4 || innerFieldId == 6){
             if(innerField.getFieldStatusById((innerFieldId + 2) < 8 ? innerFieldId + 2 : innerFieldId - 4) == enemy &&
                     innerField.getFieldStatusById((innerFieldId + 4) < 8 ? innerFieldId + 4 : innerFieldId - 2) == enemy){
-                score += 30;
+                score += SCORE_TO_RECEIVE;
                 winsInnerField = true;
             }
         }

@@ -1,6 +1,8 @@
 package janluca.de.ultimatetictactoe.game;
 
 
+import java.util.Arrays;
+
 public class InnerField {
 
     private Game game;
@@ -25,6 +27,22 @@ public class InnerField {
         winner = PlayerType.EMPTY;
         hasWinner = false;
         amountMoves = 0;
+    }
+
+    public InnerField createCopyForPrediction(Game newGame){
+        InnerField copy = new InnerField(newGame, fieldId);
+        copy.setRequiredCopyValues(
+                fieldId, amountMoves, winner, hasWinner, field
+        );
+        return copy;
+    }
+
+    private void setRequiredCopyValues(int fieldId, int amountMoves, PlayerType winner, boolean hasWinner, PlayerType[] field){
+        this.fieldId = fieldId;
+        this.amountMoves = amountMoves;
+        this.winner = winner;
+        this.hasWinner = hasWinner;
+        this.field = Arrays.copyOf(field, field.length);
     }
 
     public PlayerType[] getFieldStatus(){
@@ -78,7 +96,6 @@ public class InnerField {
         this.winner = winner;
         hasWinner = true;
         game.updateInnerFieldWon(fieldId, winner);
-        System.out.println("field won for " + winner.toString());
     }
 
     public boolean isOver(){

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import janluca.de.ultimatetictactoe.R;
 
@@ -41,7 +42,15 @@ public class Game {
 
     //Constructors and methods for copying
     //-----
+
+
+
+    //TODO mabye Highlight last move made
     public Game(View rootView, boolean isTwoPlayerGame){
+        this(rootView, isTwoPlayerGame, false);
+    }
+
+    private Game(View rootView, boolean isTwoPlayerGame, boolean gameUsedForPrediction){
         this.isTwoPlayerGame = isTwoPlayerGame;
         this.rootView = rootView;
 
@@ -55,37 +64,37 @@ public class Game {
         activeOuterField = -1;
         turnCounter = 0;
 
-        saveOuterFieldViews();
-        updateStatusField();
-        clearField();
-        changeEnabledFieldsVisualisation();
-        gameUsedForPrediction = false;
+        this.gameUsedForPrediction = gameUsedForPrediction;
+
+        if(!gameUsedForPrediction){
+            saveOuterFieldViews();
+            updateStatusField();
+            clearField();
+            changeEnabledFieldsVisualisation();
+        }
     }
 
     public Game createCopyForPrediction(){
-        Game newGame = new Game(this.rootView, this.isTwoPlayerGame);
+        Game newGame = new Game(this.rootView, this.isTwoPlayerGame, true);
         newGame.setRequiredCopyValues(
-                outerFieldViews, activeOuterField, winner, gameOver, turnCounter, field, winningFieldIds
+                activeOuterField, winner, gameOver, turnCounter, field
         );
         return newGame;
     }
 
 
-    private void setRequiredCopyValues(FrameLayout[] outerFieldViews,
-                                       int activeOuterField,
+    private void setRequiredCopyValues(int activeOuterField,
                                        PlayerType winner,
                                        boolean gameOver,
                                        int turnCounter,
-                                       InnerField[] field,
-                                       int[] winningFieldIds){
-        this.outerFieldViews = outerFieldViews;
+                                       InnerField[] field){
         this.activeOuterField = activeOuterField;
         this.winner = winner;
         this.gameOver = gameOver;
         this.turnCounter = turnCounter;
-        this.field = field;
-        this.winningFieldIds = winningFieldIds;
-        this.gameUsedForPrediction = true;
+        for(int i = 0; i < field.length; i++){
+            this.field[i] = field[i].createCopyForPrediction(this);
+        }
     }
 
 
@@ -137,10 +146,33 @@ public class Game {
         }
     }
 
+    private void updateButtonViewAfterMove(int outerFieldId, int innerFieldId, PlayerType activePlayer){
+        View tempView = outerFieldViews[outerFieldId].
+                findViewById(R.id.innerFieldParent);
+        //TODO do not leave in production code
+        Button view = null;
+        if (tempView == null) {
+            int a = 0;
+            a++;
+            int b = a*2;
+        } else {
+            view = (Button)
+                    tempView.findViewWithTag(String.valueOf(innerFieldId));
+        }
+
+        if(activePlayer == PlayerType.PLAYER_X){
+            view.setBackgroundResource(R.drawable.tic_tac_toe_x);
+        } else {
+            view.setBackgroundResource(R.drawable.tic_tac_toe_o);
+        }
+    }
+
     private void updateStatusField(){
         TextView statusView = (TextView) rootView.findViewById(R.id.statusText);
-        if(gameOver){
-            statusView.setText(winner.toString() + " won the game!");
+        if(gameOver && winner == PlayerType.EMPTY) {
+            statusView.setText(R.string.draw_display_string);
+        } else if(gameOver) {
+                statusView.setText(winner.toString() + " won the game!");
         } else {
             statusView.setText("It's " + getActivePlayer().toString() + "'s turn");
         }
@@ -185,7 +217,7 @@ public class Game {
         System.out.println(outerTag + ": " + innerTag);
 
         if(fieldIsValidMove(outerTag, innerTag)){
-            doMove(outerTag, innerTag, view);
+            doMove(outerTag, innerTag);
             return true;
         }else {
             return false;
@@ -197,29 +229,25 @@ public class Game {
     }
 
     public void doMove(Move move){
-        Button buttonView = (Button) outerFieldViews[move.getOuterFieldId()].
-                findViewById(R.id.innerFieldParent).
-                findViewWithTag(String.valueOf(move.getInnerFieldId()));
-
-        doMove(move.getOuterFieldId(), move.getInnerFieldId(), buttonView);
+        doMove(move.getOuterFieldId(), move.getInnerFieldId());
     }
 
-    private void doMove(int outerFieldId, int innerFieldId, Button view){
+    private void doMove(int outerFieldId, int innerFieldId){
+
 
         final PlayerType activePlayer = getActivePlayer();
         field[outerFieldId].doMove(innerFieldId, activePlayer);
-        if(activePlayer == PlayerType.PLAYER_X){
-            view.setBackgroundResource(R.drawable.tic_tac_toe_x);
-        } else {
-            view.setBackgroundResource(R.drawable.tic_tac_toe_o);
-        }
         turnCounter++;
         activeOuterField = field[innerFieldId].isOver() ? -1 : innerFieldId;
         checkGameOver();
 
         if(!gameUsedForPrediction){
+            if(!field[outerFieldId].isOver()){
+                updateButtonViewAfterMove(outerFieldId, innerFieldId, activePlayer);
+            }
             updateStatusField();
             changeEnabledFieldsVisualisation();
+            System.out.println("on move " + turnCounter);
         }
 
     }
@@ -262,7 +290,11 @@ public class Game {
                 }
             }
         }
-        return (Move[]) allowedMoves.toArray();
+        Move[] returnMoves = new Move[allowedMoves.size()];
+        for(int i = 0; i < allowedMoves.size(); i++){
+            returnMoves[i] = allowedMoves.get(i);
+        }
+        return returnMoves;
     }
 
 
@@ -288,18 +320,20 @@ public class Game {
 
     private void setWinner(PlayerType winner, int[] winningFieldIds){
         this.winningFieldIds = winningFieldIds;
-
-
+        if(!gameUsedForPrediction){
+            System.out.println("Game won");
+        }
         this.winner = winner;
         gameOver = true;
-        if(!gameUsedForPrediction){
-            System.out.println("entire game won for " + winner.toString());
-        }
     }
 
-
+    private void setDraw(){
+        gameOver = true;
+    }
 
     private void checkGameOver(){
+
+
         int[] winningFieldIds = new int[3];
         //checks vertical winning
         for(int i = 0; i < 3; i++){
@@ -338,6 +372,14 @@ public class Game {
             winningFieldIds[1] = 4;
             winningFieldIds[2] = 6;
             setWinner(field[4].getWinner(), winningFieldIds);
+        }
+
+        boolean isDraw = true;
+        for(InnerField f: field){
+            isDraw = isDraw && f.isOver();
+        }
+        if(isDraw){
+            setDraw();
         }
     }
 

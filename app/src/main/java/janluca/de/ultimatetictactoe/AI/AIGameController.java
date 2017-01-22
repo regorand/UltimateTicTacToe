@@ -11,31 +11,50 @@ public class AIGameController {
 
     private Game game;
 
-    private Ai ai;
+    boolean isShowdown;
+
+    //only used during botShowdown
+    private Ai ai, firstAi;
 
     public AIGameController(View rootView, Difficulty difficulty){
         game = new Game(rootView, false);
         ai = new Ai(difficulty, game);
+        isShowdown = false;
+        firstAi = null;
+    }
+
+    public AIGameController(View rootView, Difficulty difficultyO, Difficulty difficultyX){
+        game = new Game(rootView, false);
+        ai = new Ai(difficultyO, game);
+        firstAi = new Ai(difficultyX, game);
+        isShowdown = true;
     }
 
     public void handleClick(View view){
-        if(game.isStillActive()){
-            if(game.handleClickOnView((Button) view)){
-                doAIMove();
+        if(isShowdown){
+            doShowdown();
+        }else {
+            if(game.isStillActive()){
+                if(game.handleClickOnView((Button) view)){
+                    doAIMove();
+                }
             }
         }
+    }
 
-
+    private void doShowdown(){
+        while(game.isStillActive()){
+            game.doMove(firstAi.decideOnMove(game));
+            doAIMove();
+        }
     }
 
     private void doAIMove(){
-        Move move = ai.decideOnMove(game);
-
-        game.doMove(move);
+        if(game.isStillActive()){
+            Move move = ai.decideOnMove(game);
+            game.doMove(move);
+        }
     }
-
-    //TODO create AI
-    //http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-practical-guide-to-building-a-complete-game-a-r784
 
     public void resetGame(View view){
         game = new Game(view, false);

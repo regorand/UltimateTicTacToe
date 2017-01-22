@@ -24,33 +24,7 @@ public class Ai {
         Move[] allowedMoves = game.getAllowedMoves();
         MoveEvaluator moveEvaluator = new MoveEvaluator(difficulty, AI_PLAYER_TYPE, game);
 
-        int[] scores = moveEvaluator.evaluateMoveScores(allowedMoves);
-
-        return allowedMoves[getMoveIndexByDifficulty(scores)];
+        return moveEvaluator.evaluateMoveScores(allowedMoves);
     }
-
-
-
-
-    private int getMoveIndexByDifficulty(int[] scores){
-        //either get random move of top x for different difficulties or use different levels of recursion and prediction in getMovesScores()
-        if(difficulty == Difficulty.VERY_EASY){
-            Random r = new Random();
-            return r.nextInt(scores.length);
-        } else if(difficulty == Difficulty.EASY){
-
-        } else if(difficulty == Difficulty.MEDIUM){
-
-        } else if(difficulty == Difficulty.HARD){
-
-        }
-        return 0;
-    }
-
-
-
-
-
-
 
 }

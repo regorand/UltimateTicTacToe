@@ -10,8 +10,6 @@ import janluca.de.ultimatetictactoe.game.PlayerType;
 
 public class TicTacToeField extends Button {
 
-    private PlayerType playerType;
-
     public TicTacToeField(Context context) {
         super(context);
     }

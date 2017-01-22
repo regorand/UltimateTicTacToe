@@ -43,6 +43,12 @@ public class MenuFragment extends Fragment{
                 ((MainActivity) getActivity()).chooseDifficulty();
             }
         });
+        getActivity().findViewById(R.id.botShowdownButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).startBotShowdown();
+            }
+        });
         getActivity().findViewById(R.id.helpButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

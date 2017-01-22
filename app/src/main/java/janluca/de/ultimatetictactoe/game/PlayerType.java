@@ -12,10 +12,10 @@ public enum PlayerType {
         this.value = value;
     }
 
-    public static  PlayerType getEnemy(PlayerType playerType){
-        if(playerType == PlayerType.PLAYER_O){
+    public  PlayerType getEnemy(){
+        if(this == PLAYER_O){
             return PLAYER_X;
-        } else if(playerType == PlayerType.PLAYER_X){
+        } else if(this == PLAYER_X){
             return PLAYER_O;
         }
         return EMPTY;
