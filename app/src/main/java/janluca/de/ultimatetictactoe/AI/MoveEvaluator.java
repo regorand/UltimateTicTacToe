@@ -1,24 +1,16 @@
 package janluca.de.ultimatetictactoe.AI;
 
-import android.util.IntProperty;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import janluca.de.ultimatetictactoe.game.Game;
 import janluca.de.ultimatetictactoe.game.InnerField;
 import janluca.de.ultimatetictactoe.game.Move;
 import janluca.de.ultimatetictactoe.game.PlayerType;
 
-public class MoveEvaluator {
+public class MoveEvaluator  {
 
     private Difficulty difficulty;
 
     final private Game currentGame;
-
-
 
     private PlayerType playerExecutingMove;
 
@@ -27,15 +19,14 @@ public class MoveEvaluator {
 
     //TODO maybe let certain criteria only be used by certain difficulties
     //TODO HArd bot takes incredibly long to decide on move
-    //TODO maybe start move evaluation in different Thread, that way you could update while waiting for AI to decide (or for showdown)
-    public MoveEvaluator(Difficulty difficulty, PlayerType playerExecutingMove, final Game game){
+    MoveEvaluator(Difficulty difficulty, PlayerType playerExecutingMove, final Game game){
         this.difficulty = difficulty;
         currentGame = game;
         this.playerExecutingMove = playerExecutingMove;
         enemy = playerExecutingMove.getEnemy();
     }
 
-    public Move evaluateMoveScores(Move[] moves){
+    Move evaluateMoveScores(Move[] moves){
         int recursionDepth;
         switch (difficulty){
             case EASY:
@@ -199,6 +190,47 @@ public class MoveEvaluator {
         return score;
     }
 
+    ////possiblity to deny a possibility of two outerFIelds in a row
+    private int destroyTwoInRowOuterPossiblity(Move move){
+        final int SCORE_TO_RECEIVE = 50000;
+
+        int score = 0;
+        int outerFieldId = move.getOuterFieldId();
+
+        if((currentGame.getOuterFieldById((outerFieldId + 3) % 9) == enemy && currentGame.getOuterFieldById((outerFieldId + 6) % 9) == PlayerType.EMPTY) ||
+                (currentGame.getOuterFieldById((outerFieldId + 6) % 9) == enemy && currentGame.getOuterFieldById((outerFieldId + 3) % 9) == PlayerType.EMPTY)){
+            //vertical winning
+            score += SCORE_TO_RECEIVE;
+        }
+
+        int row = outerFieldId / 3;
+        if((currentGame.getOuterFieldById((outerFieldId + 1) % 3 + (3 * row) ) == enemy &&
+                currentGame.getOuterFieldById((outerFieldId + 2) % 3 + (3 * row) ) == PlayerType.EMPTY) ||
+                (currentGame.getOuterFieldById((outerFieldId + 2) % 3 + (3 * row) ) == enemy &&
+                        currentGame.getOuterFieldById((outerFieldId + 1) % 3 + (3 * row) ) == PlayerType.EMPTY)){
+            score += SCORE_TO_RECEIVE;
+        }
+
+        if(outerFieldId == 0 || outerFieldId == 4 || outerFieldId == 8){
+            if((currentGame.getOuterFieldById((outerFieldId + 4) % 12) == enemy &&
+                    currentGame.getOuterFieldById((outerFieldId + 8) % 12) == PlayerType.EMPTY) ||
+                    (currentGame.getOuterFieldById((outerFieldId + 8) % 12) == enemy &&
+                            currentGame.getOuterFieldById((outerFieldId + 4) % 12) == PlayerType.EMPTY)){
+                score += SCORE_TO_RECEIVE;
+            }
+        }
+
+        if(outerFieldId == 2 || outerFieldId == 4 || outerFieldId == 6){
+            if((currentGame.getOuterFieldById((outerFieldId + 2) < 8 ? outerFieldId + 2 : outerFieldId - 4) == enemy &&
+                    currentGame.getOuterFieldById((outerFieldId + 4) < 8 ? outerFieldId + 4 : outerFieldId - 2) == PlayerType.EMPTY) ||
+                    (currentGame.getOuterFieldById((outerFieldId + 4) < 8 ? outerFieldId + 4 : outerFieldId - 2) == enemy &&
+                            currentGame.getOuterFieldById((outerFieldId + 2) < 8 ? outerFieldId + 2 : outerFieldId - 4) == PlayerType.EMPTY)){
+                score += SCORE_TO_RECEIVE;
+            }
+        }
+        return score;
+    }
+
     //outerField: PlacementScores
     private int getOuterFieldPlacementScores(Move move){
         switch (move.getOuterFieldId()){
@@ -259,6 +291,7 @@ public class MoveEvaluator {
             score += getTwoOuterFieldInRow(move);
             score += outerFieldDestroyTwoInRow(move);
             score += getOuterFieldPlacementScores(move);
+            score += destroyTwoInRowOuterPossiblity(move);
         }
 
         return score;

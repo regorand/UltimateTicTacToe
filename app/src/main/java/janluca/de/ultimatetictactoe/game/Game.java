@@ -72,7 +72,7 @@ public class Game {
     }
 
     public Game createCopyForPrediction(){
-        Game newGame = new Game(this.rootView);
+        Game newGame = new Game(this.rootView, true);
         newGame.setRequiredCopyValues(
                 activeOuterField, winner, gameOver, turnCounter, field
         );
@@ -244,7 +244,6 @@ public class Game {
             }
             updateStatusField();
             changeEnabledFieldsVisualisation();
-            System.out.println("on move " + turnCounter);
         }
 
     }
@@ -262,7 +261,7 @@ public class Game {
         return field[id];
     }
 
-    private PlayerType getActivePlayer(){
+    public PlayerType getActivePlayer(){
         return turnCounter % 2 == 0 ? PlayerType.PLAYER_X : PlayerType.PLAYER_O;
     }
 
@@ -293,7 +292,6 @@ public class Game {
         }
         return returnMoves;
     }
-
 
 
     //game engine methods

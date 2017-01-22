@@ -7,21 +7,24 @@ import android.widget.Button;
 import janluca.de.ultimatetictactoe.game.Game;
 import janluca.de.ultimatetictactoe.game.GameController;
 import janluca.de.ultimatetictactoe.game.Move;
+import janluca.de.ultimatetictactoe.game.PlayerType;
 
 public class AIGameController implements GameController {
 
     private Game game;
 
+    private Difficulty difficulty;
     //only used during botShowdown
     private Ai ai;
 
     public AIGameController(View rootView, Difficulty difficulty) {
         game = new Game(rootView);
         ai = new Ai(difficulty, this);
+        this.difficulty = difficulty;
     }
 
     public void handleClick(View view) {
-        if (game.isStillActive()) {
+        if (game.isStillActive() && game.getActivePlayer() == PlayerType.PLAYER_X) {
             if (game.handleClickOnView((Button) view)) {
                 doAIMove();
             }
@@ -30,13 +33,14 @@ public class AIGameController implements GameController {
 
     @Override
     public void moveFound(Move move) {
-
+        game.doMove(move);
+        ai.cancel(true);
+        ai = new Ai(difficulty, this);
     }
 
     private void doAIMove() {
         if (game.isStillActive()) {
-            Move move = ai.decideOnMove(game);
-            game.doMove(move);
+            ai.execute(game.createCopyForPrediction());
         }
     }
 
