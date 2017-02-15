@@ -20,10 +20,10 @@ public class BotShowdownFragment extends Fragment implements PlayableFragment {
 
     private ShowdownGameController showdownGameController;
 
-    public static BotShowdownFragment newInstance(Difficulty difficultyBotO, Difficulty difficultyBotX) {
+    public static BotShowdownFragment newInstance(Difficulty difficultyBotX, Difficulty difficultyBotO) {
         BotShowdownFragment fragment = new BotShowdownFragment();
-        fragment.difficultyO = difficultyBotO;
         fragment.difficultyX = difficultyBotX;
+        fragment.difficultyO = difficultyBotO;
         return fragment;
     }
 
@@ -41,13 +41,14 @@ public class BotShowdownFragment extends Fragment implements PlayableFragment {
     @Override
     public void onStart() {
         super.onStart();
-        showdownGameController = new ShowdownGameController(getView(), difficultyO, difficultyX);
+        showdownGameController = new ShowdownGameController(getView(), difficultyX, difficultyO);
         getView().findViewById(R.id.resetButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 resetGame();
             }
         });
+        System.out.println("started");
     }
 
     @Override

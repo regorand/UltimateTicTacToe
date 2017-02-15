@@ -11,10 +11,13 @@ import android.widget.Button;
 
 import janluca.de.ultimatetictactoe.R;
 import janluca.de.ultimatetictactoe.game.Game;
+import janluca.de.ultimatetictactoe.game.PlayerType;
 
 public class TwoPlayerFragment extends Fragment implements PlayableFragment {
 
     public static final String FRAGMENT_MANAGER_ID = "twoPlayer";
+
+    Bundle savedGame;
 
     Game game;
 
@@ -23,8 +26,27 @@ public class TwoPlayerFragment extends Fragment implements PlayableFragment {
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putIntegerArrayList("fieldStates", game.getFieldStateForSavingInstanceState());
+        outState.putInt("activeOuterField", game.getActiveOuterFieldId());
+        outState.putInt("turnCounter", game.getTurnCounter());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        System.out.println("I was here!");
+    }
+
     public void registerGame(){
         game = new Game(getView());
+        if(savedGame != null){
+            game.loadFieldStateFromInstanceState(savedGame.getIntegerArrayList("fieldStates"));
+            game.setActiveOuterField(savedGame.getInt("activeOuterField"));
+            game.setTurnCounter(savedGame.getInt("turnCounter"));
+        }
     }
 
     public TwoPlayerFragment(){

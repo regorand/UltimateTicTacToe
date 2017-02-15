@@ -1,6 +1,11 @@
 package janluca.de.ultimatetictactoe.AI;
 
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Random;
+
 import janluca.de.ultimatetictactoe.game.Game;
 import janluca.de.ultimatetictactoe.game.InnerField;
 import janluca.de.ultimatetictactoe.game.Move;
@@ -16,9 +21,18 @@ class MoveEvaluator {
 
     private PlayerType enemy;
 
+    /*
+    TODO possible complete refactoring of AI (not actually needed):
+     -get states of the other fields at each level of recursion to determine if winning (and trading) an innerField might be worth due to already existing two in rows in other fields
+     needed for win
+     */
+
+
 
     //TODO maybe let certain criteria only be used by certain difficulties
-    //TODO HArd bot takes incredibly long to decide on move
+    //Hard bot takes incredibly long to decide on move
+    //TODO only use some of the criteria when deeper in recursion => maybe
+    //TODO exclude certain moves for further recursion when its a bad move already (may enable 4 deep recursion for hard bot and may make an extreme bot with 5 recursion possible)
     MoveEvaluator(Difficulty difficulty, PlayerType playerExecutingMove, final Game game) {
         this.difficulty = difficulty;
         currentGame = game;
@@ -29,6 +43,9 @@ class MoveEvaluator {
     Move evaluateMoveScores(Move[] moves) {
         int recursionDepth;
         switch (difficulty) {
+            case VERY_EASY:
+                recursionDepth = 0;
+                break;
             case EASY:
                 recursionDepth = 1;
                 break;
@@ -41,7 +58,47 @@ class MoveEvaluator {
             default:
                 recursionDepth = 1;
         }
-        return evaluateMoveScores(moves, recursionDepth);
+        return getMoveFromEvaluatedArray(evaluateMoveScoresAlt(moves, recursionDepth));
+        //return evaluateMoveScores(moves, recursionDepth);
+    }
+
+    private Move[] evaluateMoveScoresAlt(Move[] moves, int remainingRecursion) {
+        for (Move move : moves) {
+            int score = 0;
+            score += getInnerFieldPlacementScore(move);
+            score += winsInnerField(move);
+            score += getTwoInRowScore(move);
+            if (difficulty.isEqualOrHigherDifficultyThan(Difficulty.MEDIUM)) {
+                score += destroyTwoInRowForEnemy(move);
+                if (difficulty.isEqualOrHigherDifficultyThan(Difficulty.HARD)) {
+                    score += destroyTwoInRowPossiblity(move);
+                    score += getOuterFieldPlacementScores(move, false);
+                }
+            }
+
+            if (remainingRecursion > 0) {
+                final Game gameCopy = currentGame.createCopyForPrediction();
+                gameCopy.doMove(move);
+                if (gameCopy.isStillActive()) {
+                    final MoveEvaluator moveEvaluator = new MoveEvaluator(this.difficulty, playerExecutingMove.getEnemy(), gameCopy);
+                    Move[] evaluatedRecursionMoves = moveEvaluator.evaluateMoveScoresAlt(gameCopy.getAllowedMoves(), remainingRecursion - 1);
+                    if(!(evaluatedRecursionMoves == null)){
+                        score -= 0.8 * getMoveFromEvaluatedArray(evaluatedRecursionMoves).getScore();
+                    }
+                }
+            }
+
+            move.setScore(score);
+        }
+
+        Arrays.sort(moves, new Comparator<Move>() {
+            @Override
+            public int compare(Move move, Move t1) {
+                return move.getScore() > t1.getScore() ? -1 : move.getScore() == t1.getScore() ? 0 : 1;
+            }
+        });
+
+        return moves;
     }
 
     private Move evaluateMoveScores(Move[] moves, int remainingRecursion) {
@@ -56,7 +113,7 @@ class MoveEvaluator {
                 score += destroyTwoInRowForEnemy(move);
                 if (difficulty.isEqualOrHigherDifficultyThan(Difficulty.HARD)) {
                     score += destroyTwoInRowPossiblity(move);
-                    score += getOuterFieldPlacementScores(move);
+                    score += getOuterFieldPlacementScores(move, false);
                 }
             }
 
@@ -66,7 +123,6 @@ class MoveEvaluator {
                 if (gameCopy.isStillActive()) {
                     final MoveEvaluator moveEvaluator = new MoveEvaluator(this.difficulty, playerExecutingMove.getEnemy(), gameCopy);
                     score -= 0.8 * moveEvaluator.evaluateMoveScores(gameCopy.getAllowedMoves(), remainingRecursion - 1).getScore();
-
                 }
             }
 
@@ -78,6 +134,27 @@ class MoveEvaluator {
         }
         return bestMove;
     }
+
+    private Move getMoveFromEvaluatedArray(Move[] moves){
+        Random r = new Random();
+        int amountMoves = moves.length;
+        if(amountMoves < 1){
+            System.out.println("stop");
+        }
+        if(r.nextInt(difficulty.getErrorRate()) == 0){
+            amountMoves *= difficulty.getErrorImpact();
+            if(amountMoves < 1){
+                amountMoves = 1;
+            }
+            return moves[r.nextInt(amountMoves)];
+        } else {
+            return moves[0];
+        }
+    }
+
+
+    //------
+    //evaluating Methods
 
     //outerField: win
     private int winsGame(Move move) {
@@ -237,20 +314,21 @@ class MoveEvaluator {
     }
 
     //outerField: PlacementScores
-    private int getOuterFieldPlacementScores(Move move) {
+    private int getOuterFieldPlacementScores(Move move, boolean innerFieldWon) {
+        int multiplier = innerFieldWon ? 1000 : 1;
         switch (move.getOuterFieldId()) {
             case 4:
                 //middle field
-                return 10000;
+                return 10 * multiplier;
             case 0:
             case 2:
             case 6:
             case 8:
                 //corner fields
-                return 5000;
+                return 5 * multiplier;
             default:
                 //side fields
-                return 1000;
+                return multiplier;
         }
     }
 
@@ -301,6 +379,7 @@ class MoveEvaluator {
                 score += outerFieldDestroyTwoInRow(move);
                 if(difficulty.isEqualOrHigherDifficultyThan(Difficulty.HARD)){
                     score += destroyTwoInRowOuterPossiblity(move);
+                    score += getOuterFieldPlacementScores(move, true);
                 }
             }
         }
@@ -357,14 +436,12 @@ class MoveEvaluator {
 
         int score = 0;
         int innerFieldId = move.getInnerFieldId();
-        boolean winsInnerField = false;
         InnerField innerField = currentGame.getInnerFieldStateById(move.getOuterFieldId());
 
         if (innerField.getFieldStatusById((innerFieldId + 3) % 9) == enemy &&
                 innerField.getFieldStatusById((innerFieldId + 6) % 9) == enemy) {
             //vertical winning
             score += SCORE_TO_RECEIVE;
-            winsInnerField = true;
         }
 
         int row = innerFieldId / 3;
@@ -372,14 +449,12 @@ class MoveEvaluator {
                 innerField.getFieldStatusById((innerFieldId + 2) % 3 + (3 * row)) == enemy) {
             //horizontal winning
             score += SCORE_TO_RECEIVE;
-            winsInnerField = true;
         }
 
         if (innerFieldId == 0 || innerFieldId == 4 || innerFieldId == 8) {
             if (innerField.getFieldStatusById((innerFieldId + 4) % 12) == enemy &&
                     innerField.getFieldStatusById((innerFieldId + 8) % 12) == enemy) {
                 score += SCORE_TO_RECEIVE;
-                winsInnerField = true;
             }
         }
 
@@ -387,12 +462,7 @@ class MoveEvaluator {
             if (innerField.getFieldStatusById((innerFieldId + 2) < 8 ? innerFieldId + 2 : innerFieldId - 4) == enemy &&
                     innerField.getFieldStatusById((innerFieldId + 4) < 8 ? innerFieldId + 4 : innerFieldId - 2) == enemy) {
                 score += SCORE_TO_RECEIVE;
-                winsInnerField = true;
             }
-        }
-
-        if (winsInnerField) {
-            score += winsGame(move);
         }
 
         return score;

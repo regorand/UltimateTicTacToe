@@ -26,6 +26,10 @@ public class Game {
     //-1 = all, 0 = topleft, 2 top right etc.
     private int activeOuterField;
 
+    public PlayerType getWinner() {
+        return winner;
+    }
+
     private PlayerType winner;
 
     private boolean gameOver;
@@ -248,7 +252,7 @@ public class Game {
 
     }
 
-    //getter methods
+    //getter and setter methods
     //-----
 
 
@@ -263,6 +267,10 @@ public class Game {
 
     public PlayerType getActivePlayer(){
         return turnCounter % 2 == 0 ? PlayerType.PLAYER_X : PlayerType.PLAYER_O;
+    }
+
+    public int getTurnCounter(){
+        return turnCounter;
     }
 
     public Move[] getAllowedMoves(){
@@ -293,6 +301,34 @@ public class Game {
         return returnMoves;
     }
 
+    public ArrayList<Integer> getFieldStateForSavingInstanceState(){
+        ArrayList<Integer> returnList = new ArrayList<>();
+        for(InnerField innerField: field){
+            returnList.addAll(innerField.getFieldStatusForSavingInstance());
+        }
+        return returnList;
+    }
+
+    public int getActiveOuterFieldId(){
+        return activeOuterField;
+    }
+
+    public void loadFieldStateFromInstanceState(ArrayList<Integer> fieldStatesAsIntegers){
+        for(int i = 0; i < fieldStatesAsIntegers.size(); i++){
+            int outerField = i / 9, innerField = i % 9;
+            PlayerType playerType = fieldStatesAsIntegers.get(i) > 0 ? PlayerType.PLAYER_X : fieldStatesAsIntegers.get(i) < 0 ? PlayerType.PLAYER_O : PlayerType.EMPTY;
+
+            field[outerField].setFieldById(playerType, innerField);
+        }
+    }
+
+    public void setActiveOuterField(int activeOuterField){
+        this.activeOuterField = activeOuterField;
+    }
+
+    public void setTurnCounter(int turnCounter){
+        this.turnCounter = turnCounter;
+    }
 
     //game engine methods
     //-----

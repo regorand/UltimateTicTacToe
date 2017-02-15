@@ -1,6 +1,8 @@
 package janluca.de.ultimatetictactoe;
 
 import android.content.pm.ActivityInfo;
+import android.os.PersistableBundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -30,7 +32,16 @@ public class MainActivity extends AppCompatActivity {
                     .beginTransaction()
                     .add(R.id.root_layout, MenuFragment.newInstance(), MenuFragment.FRAGMENT_MANAGER_ID)
                     .commit();
+        } else {
+            activeGame = (PlayableFragment) getSupportFragmentManager().findFragmentByTag("savedGame");
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+
+        getSupportFragmentManager().putFragment(outState, "savedGame", (Fragment) activeGame);
     }
 
     public void handleClick(View view){
@@ -41,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void startBotShowdown(){
         //second Difficulty goes first and is X
-        BotShowdownFragment fragment = BotShowdownFragment.newInstance(Difficulty.HARD, Difficulty.HARD);
+        BotShowdownFragment fragment = BotShowdownFragment.newInstance(Difficulty.MEDIUM, Difficulty.HARD);
+
 
         activeGame = fragment;
 

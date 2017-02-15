@@ -1,6 +1,7 @@
 package janluca.de.ultimatetictactoe.game;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class InnerField {
@@ -51,6 +52,21 @@ public class InnerField {
 
     public PlayerType getFieldStatusById(int id){
         return field[id];
+    }
+
+    public ArrayList<Integer> getFieldStatusForSavingInstance(){
+        ArrayList<Integer> returnValue = new ArrayList<>();
+        for(PlayerType playerType: field){
+            //Player X = 1
+            //Player O = -1
+            //Player Empty = 0
+            returnValue.add(playerType == PlayerType.PLAYER_X ? 1 : playerType == PlayerType.PLAYER_O ? -1 : 0);
+        }
+        return returnValue;
+    }
+
+    public void setFieldById(PlayerType playerType, int id){
+        field[id] = playerType;
     }
 
     public boolean isValidMove(int fieldId){
