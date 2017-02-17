@@ -39,7 +39,9 @@ public class SinglePlayerFragment extends Fragment implements PlayableFragment {
     @Override
     public void onStart() {
         super.onStart();
-        aiGameController = new AIGameController(getView(), difficulty);
+        if(aiGameController == null){
+            aiGameController = new AIGameController(getView(), difficulty);
+        }
         getView().findViewById(R.id.resetButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

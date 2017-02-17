@@ -37,15 +37,18 @@ public class TwoPlayerFragment extends Fragment implements PlayableFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        System.out.println("I was here!");
+        System.out.println("onActivityCreated was called");
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        System.out.println("onCreate was called");
     }
 
     public void registerGame(){
-        game = new Game(getView());
-        if(savedGame != null){
-            game.loadFieldStateFromInstanceState(savedGame.getIntegerArrayList("fieldStates"));
-            game.setActiveOuterField(savedGame.getInt("activeOuterField"));
-            game.setTurnCounter(savedGame.getInt("turnCounter"));
+        if(game == null){
+            game = new Game(getView());
         }
     }
 
@@ -55,6 +58,7 @@ public class TwoPlayerFragment extends Fragment implements PlayableFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        System.out.println("onCreateView was called");
         return inflater.inflate(R.layout.two_player_fragment_layout, container, false);
     }
 

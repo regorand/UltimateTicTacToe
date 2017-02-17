@@ -41,7 +41,9 @@ public class BotShowdownFragment extends Fragment implements PlayableFragment {
     @Override
     public void onStart() {
         super.onStart();
-        showdownGameController = new ShowdownGameController(getView(), difficultyX, difficultyO);
+        if(showdownGameController == null) {
+            showdownGameController = new ShowdownGameController(getView(), difficultyX, difficultyO);
+        }
         getView().findViewById(R.id.resetButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
