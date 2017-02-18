@@ -17,33 +17,11 @@ public class TwoPlayerFragment extends Fragment implements PlayableFragment {
 
     public static final String FRAGMENT_MANAGER_ID = "twoPlayer";
 
-    Bundle savedGame;
-
     Game game;
 
     public static TwoPlayerFragment newInstance(){
         return new TwoPlayerFragment();
 
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putIntegerArrayList("fieldStates", game.getFieldStateForSavingInstanceState());
-        outState.putInt("activeOuterField", game.getActiveOuterFieldId());
-        outState.putInt("turnCounter", game.getTurnCounter());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        System.out.println("onActivityCreated was called");
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        System.out.println("onCreate was called");
     }
 
     public void registerGame(){

@@ -301,6 +301,7 @@ public class Game {
         return returnMoves;
     }
 
+    //most likely not needed. Kept just in case so i dont have to rewrite
     public ArrayList<Integer> getFieldStateForSavingInstanceState(){
         ArrayList<Integer> returnList = new ArrayList<>();
         for(InnerField innerField: field){
