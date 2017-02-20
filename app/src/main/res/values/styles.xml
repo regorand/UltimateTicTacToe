@@ -5,5 +5,9 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="ButtonChooseShowdownDiff">
+        <item name="android:colorBackground">@color/white</item>
+    </style>
     
 </resources>
