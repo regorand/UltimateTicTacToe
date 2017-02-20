@@ -20,7 +20,7 @@ public class ShowdownGameController implements GameController {
 
     private boolean showdownStarted;
 
-    private static final int MAX_LOOP_DEPTH = 100;
+    private static final int MAX_LOOP_DEPTH = 10;
 
     private int currentLoopDepth = 0;
 

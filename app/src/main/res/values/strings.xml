@@ -21,5 +21,6 @@
     <string name="choose_difficulty">Choose Difficulty</string>
     <string name="draw_display_string">It\'s a draw</string>
     <string name="versus_tag">VS</string>
+    <string name="choose_showdown_diff_text">Choose Difficulty for Showdown</string>
 
 </resources>

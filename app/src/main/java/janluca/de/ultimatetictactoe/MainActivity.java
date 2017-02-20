@@ -11,6 +11,7 @@ import janluca.de.ultimatetictactoe.AI.Difficulty;
 import janluca.de.ultimatetictactoe.fragments.BotShowdownFragment;
 import janluca.de.ultimatetictactoe.fragments.ChooseDifficultyFragment;
 import janluca.de.ultimatetictactoe.fragments.PlayableFragment;
+import janluca.de.ultimatetictactoe.fragments.ShowdownDifficultyFragment;
 import janluca.de.ultimatetictactoe.fragments.SinglePlayerFragment;
 import janluca.de.ultimatetictactoe.fragments.TwoPlayerFragment;
 import janluca.de.ultimatetictactoe.fragments.HelpFragment;
@@ -50,16 +51,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startBotShowdown(){
+    public void startBotShowdown(Difficulty diffX, Difficulty diffY){
         //second Difficulty goes first and is X
-        BotShowdownFragment fragment = BotShowdownFragment.newInstance(Difficulty.MEDIUM, Difficulty.HARD);
+        BotShowdownFragment fragment = BotShowdownFragment.newInstance(diffX, diffY);
+
 
 
         activeGame = fragment;
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.root_layout, fragment, BotShowdownFragment.FRAGMENT_MANAGER_ID)
+                .replace(R.id.root_layout, fragment, ShowdownDifficultyFragment.FRAGMENT_MANAGER_ID)
                 .addToBackStack(null)
                 .commit();
     }
@@ -92,6 +94,14 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.root_layout, ChooseDifficultyFragment.newInstance(), ChooseDifficultyFragment.FRAGMENT_MANAGER_ID)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void chooseShowdownDifficulty(){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.root_layout, ShowdownDifficultyFragment.newInstance(), ShowdownDifficultyFragment.FRAGMENT_MANAGER_ID)
                 .addToBackStack(null)
                 .commit();
     }
