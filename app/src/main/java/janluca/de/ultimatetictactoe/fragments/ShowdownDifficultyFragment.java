@@ -73,8 +73,7 @@ public class ShowdownDifficultyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.showdown_difficulty_fragment_layout, container, false);
-        changeActiveButtonX(0);
-        changeActiveButtonO(0);
+
         return view;
     }
 
@@ -149,5 +148,8 @@ public class ShowdownDifficultyFragment extends Fragment {
                 startShowdown();
             }
         });
+
+        changeActiveButtonX(0);
+        changeActiveButtonO(0);
     }
 }
