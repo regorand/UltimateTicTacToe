@@ -1,5 +1,6 @@
 package janluca.de.ultimatetictactoe.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,9 +17,7 @@ public class ShowdownDifficultyFragment extends Fragment {
 
     final static public String FRAGMENT_MANAGER_ID = "showdownDifficulty";
 
-    private Button[] buttons_X = new Button[4], buttons_O = new Button[4];
-
-    private int activeButtonX, activeButtonO;
+    private View activeViewX, activeViewO;
 
     private Difficulty selectedDiffX, selectedDiffO;
 
@@ -55,26 +54,42 @@ public class ShowdownDifficultyFragment extends Fragment {
         return Difficulty.VERY_EASY;
     }
 
-    private void changeActiveButtonX(int newActiveButtonId){
-        buttons_X[activeButtonX].setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_not_selected));
-        buttons_X[newActiveButtonId].setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_selected));
-        activeButtonX = newActiveButtonId;
-        setDiffX(findDifficultyById(newActiveButtonId));
+    private void changeActiveButtonX(View view){
+        //view.setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_not_selected));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(activeViewX != null) {
+                activeViewX.setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_not_selected, null));
+            }
+            view.setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_selected, null));
+        } else {
+            if(activeViewX != null) {
+                activeViewX.setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_not_selected));
+            }
+            view.setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_selected));
+        }
+        activeViewX = view;
     }
 
-    private void changeActiveButtonO(int newActiveButtonId){
-        buttons_O[activeButtonO].setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_not_selected));
-        buttons_O[newActiveButtonId].setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_selected));
-        activeButtonO = newActiveButtonId;
-        setDiffO(findDifficultyById(newActiveButtonId));
+    private void changeActiveButtonO(View view){
+        //view.setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_not_selected));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(activeViewO != null) {
+                activeViewO.setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_not_selected, null));
+            }
+            view.setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_selected, null));
+        } else {
+            if(activeViewO != null){
+                activeViewO.setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_not_selected));
+            }
+            view.setBackgroundColor(getView().getResources().getColor(R.color.showdown_button_selected));
+        }
+        activeViewO = view;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.showdown_difficulty_fragment_layout, container, false);
-
-        return view;
+        return inflater.inflate(R.layout.showdown_difficulty_fragment_layout, container, false);
     }
 
     public void startShowdown(){
@@ -84,61 +99,65 @@ public class ShowdownDifficultyFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        buttons_X[0] = (Button) getActivity().findViewById(R.id.very_easy_bot_button_X);
-        buttons_X[0].setOnClickListener(new View.OnClickListener() {
+        Button veryEasyX = (Button) getActivity().findViewById(R.id.very_easy_bot_button_X);
+        changeActiveButtonX(veryEasyX);
+        veryEasyX.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeActiveButtonX(0);
+                changeActiveButtonX(view);
+                setDiffX(Difficulty.VERY_EASY);
             }
         });
-        buttons_X[1] = (Button) getActivity().findViewById(R.id.easy_bot_button_X);
-        buttons_X[1].setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.easy_bot_button_X).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeActiveButtonX(1);
+                changeActiveButtonX(view);
+                setDiffX(Difficulty.EASY);
             }
         });
-        buttons_X[2] = (Button) getActivity().findViewById(R.id.medium_bot_button_X);
-        buttons_X[2].setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.medium_bot_button_X).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeActiveButtonX(2);
+                changeActiveButtonX(view);
+                setDiffX(Difficulty.MEDIUM);
             }
         });
-        buttons_X[3] = (Button) getActivity().findViewById(R.id.hard_bot_button_X);
-        buttons_X[3].setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.hard_bot_button_X).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeActiveButtonX(3);
+                changeActiveButtonX(view);
+                setDiffX(Difficulty.HARD);
             }
         });
 
-        buttons_O[0] = (Button) getActivity().findViewById(R.id.very_easy_bot_button_O);
-        buttons_O[0].setOnClickListener(new View.OnClickListener() {
+        Button veryEasyO = (Button) getActivity().findViewById(R.id.very_easy_bot_button_O);
+        changeActiveButtonO(veryEasyO);
+        veryEasyO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeActiveButtonO(0);
+                changeActiveButtonO(view);
+                setDiffO(Difficulty.VERY_EASY);
             }
         });
-        buttons_O[1] = (Button) getActivity().findViewById(R.id.easy_bot_button_O);
-        buttons_O[1].setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.easy_bot_button_O).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeActiveButtonO(1);
+                changeActiveButtonO(view);
+                setDiffO(Difficulty.EASY);
             }
         });
-        buttons_O[2] = (Button) getActivity().findViewById(R.id.medium_bot_button_O);
-        buttons_O[2].setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.medium_bot_button_O).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeActiveButtonO(2);
+                changeActiveButtonO(view);
+                setDiffO(Difficulty.MEDIUM);
             }
         });
-        buttons_O[3] = (Button) getActivity().findViewById(R.id.hard_bot_button_O);
-        buttons_O[3].setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.hard_bot_button_O).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeActiveButtonO(3);
+                changeActiveButtonO(view);
+                setDiffO(Difficulty.HARD);
             }
         });
 
@@ -148,8 +167,5 @@ public class ShowdownDifficultyFragment extends Fragment {
                 startShowdown();
             }
         });
-
-        changeActiveButtonX(0);
-        changeActiveButtonO(0);
     }
 }
