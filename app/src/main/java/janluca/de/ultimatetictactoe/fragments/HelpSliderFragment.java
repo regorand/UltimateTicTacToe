@@ -9,21 +9,21 @@ import android.view.ViewGroup;
 
 import janluca.de.ultimatetictactoe.R;
 
-public class HelpFragment extends Fragment {
+public class HelpSliderFragment extends Fragment {
 
     public static final String FRAGMENT_MANAGER_ID = "help";
 
-    public static HelpFragment newInstance(){
-        return new HelpFragment();
+    public static HelpSliderFragment newInstance(){
+        return new HelpSliderFragment();
     }
 
-    public HelpFragment(){
+    public HelpSliderFragment(){
 
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.help_fragment_layout, container, false);
+        return inflater.inflate(R.layout.tutorial_slider_layout, container, false);
     }
 }

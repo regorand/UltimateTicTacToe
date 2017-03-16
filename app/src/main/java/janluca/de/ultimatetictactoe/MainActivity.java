@@ -1,5 +1,7 @@
 package janluca.de.ultimatetictactoe;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
@@ -14,7 +16,7 @@ import janluca.de.ultimatetictactoe.fragments.PlayableFragment;
 import janluca.de.ultimatetictactoe.fragments.ShowdownDifficultyFragment;
 import janluca.de.ultimatetictactoe.fragments.SinglePlayerFragment;
 import janluca.de.ultimatetictactoe.fragments.TwoPlayerFragment;
-import janluca.de.ultimatetictactoe.fragments.HelpFragment;
+import janluca.de.ultimatetictactoe.fragments.HelpSliderFragment;
 import janluca.de.ultimatetictactoe.fragments.MenuFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -108,10 +110,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void showHelp(){
+
+        TutorialSliderActivity helpActivity = new TutorialSliderActivity();
+
+        helpActivity.startActivity(new Intent());
+
+        /*
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.root_layout, HelpFragment.newInstance(), HelpFragment.FRAGMENT_MANAGER_ID)
+                .replace(R.id.root_layout, HelpSliderFragment.newInstance(), HelpSliderFragment.FRAGMENT_MANAGER_ID)
                 .addToBackStack(null)
                 .commit();
+                */
     }
 }
